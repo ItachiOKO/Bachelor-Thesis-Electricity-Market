@@ -1,11 +1,11 @@
 import pandas as pd
 
 START_DATE = "2023-07-07"
-END_DATE = "2023-07-08"
+END_DATE = "2023-07-09"
 
 def get_market_price_data():
     data_file_path = "energy-charts_Stromproduktion_und_Börsenstrompreise_in_Deutschland_2023.csv"
-    df = pd.read_csv(data_file_path, skiprows=2, names=["date", "market_price", "buy_volume", "charge_volume", "sell_volume", "discharge_volume" "battery_soc"])
+    df = pd.read_csv(data_file_path, skiprows=2, names=["date", "market_price", "buy_volume", "sell_volume", "battery_soc"])
     df['date'] = pd.to_datetime(df['date'], utc=True)
     start_date = pd.to_datetime(START_DATE, utc=True)
     end_date = pd.to_datetime(END_DATE, utc=True)
