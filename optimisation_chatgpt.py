@@ -2,10 +2,14 @@ import pyomo.environ as pyo
 import pandas as pd
 
 from price_data import get_market_price_data   
-from config import CHARGE_RATE, BATTERY_CAPACITY, EFFICIENCY, BATTERY_PRICE, CYCLES
+from config import BATTERY_CAPACITY, EFFICIENCY, BATTERY_PRICE, CYCLES, SPECIFIC_CHARGE_RATE
+from utils import get_interval_minutes, calculate_period_in_days
+
 
 
 df = get_market_price_data()
+CHARGE_RATE = SPECIFIC_CHARGE_RATE * (get_interval_minutes(df)/60)
+
 
 time_points = df['date'].tolist()
 market_price_dict = df.set_index('date')['market_price'].to_dict()
@@ -53,15 +57,22 @@ df["sell_volume"] = [pyo.value(model.sell_volume[t]) for t in model.T]
 df["battery_soc"] = [pyo.value(model.battery_soc[t]) for t in model.T]
 df["aging_cost"] = [pyo.value(model.aging_cost[t]) for t in model.T]
 
-df["order_cost"] = df["buy_volume"] * df["market_price"] - df["sell_volume"] * df["market_price"]
+df["order_cost"] = -df["buy_volume"] * df["market_price"] + df["sell_volume"] * df["market_price"]
+df["profit_calc"] = df["sell_volume"] * df["market_price"] - df["buy_volume"] * df["market_price"] - df["aging_cost"]
 
 
-df['date'] = df['date'].dt.tz_localize(None)
 df.to_excel("optimisation_result.xlsx")
 print(df)
 
 n_cycles = df["buy_volume"].sum()/BATTERY_CAPACITY
-total_profit = pyo.value(model.OBJ)
+total_profit_model = pyo.value(model.OBJ)
+total_profit_calc = df["profit_calc"].sum()
+profit_per_cycle = total_profit_model/n_cycles
 print(f"{n_cycles}: Ladezyklen")
-print(f"Gesamtprofit_model: {total_profit} €")
-print(f"Profit pro Zyklus: {total_profit/n_cycles} €")
+print(f"Gesamtprofit_model: {total_profit_model} €")
+print(f"Gesamtprofit_calc: {total_profit_calc} €")
+print(f"Order Profit: {df['order_cost'].sum()} €")
+print(f"Profit pro Zyklus: {profit_per_cycle} €")
+print(f"Profit pro Battery: {profit_per_cycle * CYCLES} €")
+
+
