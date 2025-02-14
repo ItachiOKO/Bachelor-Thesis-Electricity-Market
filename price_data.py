@@ -1,7 +1,7 @@
 import pandas as pd
 
 START_DATE = "2023-07-07"
-END_DATE = "2023-07-09"
+END_DATE = "2023-07-14"
 
 def get_market_price_data():
     data_file_path = "energy-charts_Stromproduktion_und_Börsenstrompreise_in_Deutschland_2023.csv"
@@ -12,7 +12,7 @@ def get_market_price_data():
     filtered_df = df[(df['date'] >= start_date) & (df['date'] <= end_date)]
     return filtered_df
 
-def get_interval_time():
+def get_interval_minutes():
     df = get_market_price_data()  
     df['date'] = pd.to_datetime(df['date'])  
     time_interval = df['date'].diff().dropna().mode()[0]  
@@ -21,6 +21,6 @@ def get_interval_time():
 
 if __name__ == '__main__':
     df = get_market_price_data()
-    interval_time = get_interval_time()
+    interval_time = get_interval_minutes()
     print(df)
     print(interval_time)
