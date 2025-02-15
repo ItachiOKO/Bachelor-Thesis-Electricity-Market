@@ -1,18 +1,19 @@
 import pyomo.environ as pyo
 import pandas as pd
 
-from price_data import get_market_price_data   
-from config import BATTERY_CAPACITY, EFFICIENCY, BATTERY_PRICE, CYCLES, SPECIFIC_CHARGE_RATE
+from price_data import create_dataframe   
+from config import BATTERY_CAPACITY, EFFICIENCY, BATTERY_PRICE, CYCLES, SPECIFIC_CHARGE_RATE, START_DATE, END_DATE
 from utils import get_interval_minutes, calculate_period_in_days
 
 
 
-df = get_market_price_data()
+df = create_dataframe(START_DATE, END_DATE)
 CHARGE_RATE = SPECIFIC_CHARGE_RATE * (get_interval_minutes(df)/60)
 
 
-time_points = df['date'].tolist()
-market_price_dict = df.set_index('date')['market_price'].to_dict()
+time_points = df.index.tolist()
+market_price_dict = df['market_price'].to_dict()
+
 
 model = pyo.ConcreteModel()
 model.T = pyo.Set(initialize=time_points)
@@ -69,9 +70,8 @@ total_profit_model = pyo.value(model.OBJ)
 total_profit_calc = df["profit_calc"].sum()
 profit_per_cycle = total_profit_model/n_cycles
 print(f"{n_cycles}: Ladezyklen")
-print(f"Gesamtprofit_model: {total_profit_model} €")
-print(f"Gesamtprofit_calc: {total_profit_calc} €")
 print(f"Order Profit: {df['order_cost'].sum()} €")
+print(f"Gesamtprofit_model: {total_profit_model} €")
 print(f"Profit pro Zyklus: {profit_per_cycle} €")
 print(f"Profit pro Battery: {profit_per_cycle * CYCLES} €")
 
