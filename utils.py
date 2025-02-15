@@ -2,6 +2,7 @@ from datetime import datetime
 import pandas as pd
 from config import SPECIFIC_CHARGE_RATE
 
+
 def get_interval_minutes(df):
     df.index = pd.to_datetime(df.index)
     diffs = df.index.to_series().diff().dropna()
