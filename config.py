@@ -14,3 +14,10 @@ SPECIFIC_CHARGE_RATE = 1 #MW
 
 #Export Config
 RESULTS_FILE_NAME = f"results_BC-{BATTERY_CAPACITY}_n-{EFFICIENCY}_{START_DATE}-{END_DATE}.xlsx"
+
+
+#Table Config
+CELL_NAMES = {
+    'date': 'date',
+    'market_price': 'market_price',
+}

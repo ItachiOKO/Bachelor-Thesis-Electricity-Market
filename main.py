@@ -1,14 +1,14 @@
 from optimisation_model import setup_model, solve_model
 from result_processing import process_results
 from load_marketprice_data import create_dataframe
-from config import START_DATE, END_DATE, BATTERY_CAPACITY, LIFETIME_CYCLES, SPECIFIC_CHARGE_RATE, CSV_PATH, STEP_INTERVAL, SKIPROWS, EFFICIENCY, RESULTS_FILE_NAME
+from config import START_DATE, END_DATE, BATTERY_CAPACITY, LIFETIME_CYCLES, SPECIFIC_CHARGE_RATE, CSV_PATH, STEP_INTERVAL, SKIPROWS, RESULTS_FILE_NAME, CELL_NAMES
 from utils import get_interval_minutes
 
 
 def main_optimisation(df):
     charge_rate = SPECIFIC_CHARGE_RATE * (get_interval_minutes(df)/60)
     time_points = df.index.tolist()
-    market_price_dict = df['market_price'].to_dict()
+    market_price_dict = df[CELL_NAMES["market_price"]].to_dict()
     model = setup_model(time_points, market_price_dict, charge_rate)
     solve_model(model)
     return model

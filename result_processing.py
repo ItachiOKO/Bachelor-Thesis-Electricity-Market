@@ -1,6 +1,7 @@
 import pandas as pd
 import pyomo.environ as pyo
 
+from config import CELL_NAMES
 
 def process_results(df, model, battery_capacity, cycles):
     extract_pyo_results_to_df(df, model)
@@ -15,8 +16,8 @@ def extract_pyo_results_to_df(df, model):
     return df
 
 def add_calculations_to_df(df):
-    df["order_cost"] = -df["buy_volume"] * df["market_price"] + df["sell_volume"] * df["market_price"]
-    df["profit_calc"] = df["sell_volume"] * df["market_price"] - df["buy_volume"] * df["market_price"] - df["aging_cost"]
+    df["order_cost"] = -df["buy_volume"] * df[CELL_NAMES["market_price"]] + df["sell_volume"] * df[CELL_NAMES["market_price"]]
+    df["profit_calc"] = df["sell_volume"] * df[CELL_NAMES["market_price"]] - df["buy_volume"] * df[CELL_NAMES["market_price"]] - df["aging_cost"]
     return df
 
 def add_prints(df, model, battery_capacity, cycles):	
