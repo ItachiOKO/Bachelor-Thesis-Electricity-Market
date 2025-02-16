@@ -1,7 +1,8 @@
+import time
 from optimisation_model import setup_model, solve_model
 from result_processing import process_results
 from load_marketprice_data import create_dataframe
-from config import START_DATE, END_DATE, BATTERY_CAPACITY, LIFETIME_CYCLES, SPECIFIC_CHARGE_RATE, CSV_PATH, STEP_INTERVAL, SKIPROWS, RESULTS_FILE_NAME, CELL_NAMES
+from config import START_DATE, END_DATE, BATTERY_CAPACITY, LIFETIME_CYCLES, SPECIFIC_CHARGE_RATE, CSV_PATH, SKIPROWS, DAYS, RESULTS_FILE_NAME, CELL_NAMES
 from utils import get_interval_minutes
 
 
@@ -14,8 +15,10 @@ def main_optimisation(df):
     return model
 
 if __name__ == "__main__":
-    df = create_dataframe(START_DATE, END_DATE, CSV_PATH, STEP_INTERVAL, SKIPROWS)
+    df = create_dataframe(CSV_PATH, SKIPROWS, DAYS)
+    start_time = time.time()
     model = main_optimisation(df)
+    print(f"Berrechnungszeit: {time.time() - start_time} Sekunden")
     process_results(df, model, BATTERY_CAPACITY, LIFETIME_CYCLES)
     print(df)
     df.to_excel(RESULTS_FILE_NAME)
