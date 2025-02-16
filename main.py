@@ -14,6 +14,7 @@ def main_optimisation(df):
     solve_model(model)
     return model
 
+
 if __name__ == "__main__":
     df = create_dataframe(CSV_PATH, SKIPROWS, START_DATE, END_DATE)
     start_time = time.time()

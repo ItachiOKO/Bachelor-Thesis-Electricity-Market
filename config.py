@@ -18,7 +18,14 @@ RESULTS_FILE_NAME = f"results_BC-{BATTERY_CAPACITY}_n-{EFFICIENCY}_{START_DATE}-
 
 #Table Config
 CELL_NAMES = {
-    'date': 'date',
-    'market_price': 'market_price',
+    'date': 'Date', #only date as date-obj
+    'time': 'Time', #only time as string
+    'market_price': 'Market_price', #€/MWh
+    'buy_volume': 'Buy Volume', #MWh charging volume = buy_volume * EFFICIENCY
+    'sell_volume': 'Sell Volume', #MWh discharging volume = sell_volume / EFFICIENCY
+    'battery_soc': 'Battery SOC', #MWh 
+    'aging_cost': 'Aging Cost', #€
+    'order_cost': 'Order Cost', #€
+    'profit_calc': 'Profit Calculation' #€
 
 }
