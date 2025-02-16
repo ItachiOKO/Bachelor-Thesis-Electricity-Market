@@ -7,19 +7,20 @@ from config import START_DATE, END_DATE, CSV_PATH, SKIPROWS, CELL_NAMES
 
 
 def create_dataframe(csv_path: str, skiprows: int, start_date: str, end_date: str) -> pd.DataFrame:
-
+    # CSV einlesen, wobei "date" als String bleibt
     df = pd.read_csv(
         csv_path,
         skiprows=skiprows,
         names=[CELL_NAMES['date'], CELL_NAMES['market_price']]
     )
-    df['date'] = df['date'].apply(lambda x: parser.parse(x, ignoretz=True))
-
-
-    mask = (df["date"] >= start_date) & (df["date"] < end_date)
+    df['time'] = df['date'].apply(lambda x: x.split("T")[1])  
+    df['date'] = df['date'].apply(lambda x: parser.parse(x, ignoretz=True).date())
+    mask = (df["date"] >= pd.to_datetime(start_date).date()) & (df["date"] < pd.to_datetime(end_date).date())
     filtered_df = df.loc[mask]
+    filtered_df = filtered_df[['date', 'time', CELL_NAMES['market_price']]]
 
     return filtered_df
+
 
 
 
