@@ -1,6 +1,6 @@
 #Data Config
-START_DATE = "2023-01-01" #included
-END_DATE = "2023-02-01" #excluded
+START_DATE = "2023-08-01" #included
+END_DATE = "2023-09-01" #excluded
 CSV_PATH = "energy-charts_Stromproduktion_und_Börsenstrompreise_in_Deutschland_2023.csv"
 #STEP_INTERVAL = "15min"
 SKIPROWS = 2
@@ -13,7 +13,7 @@ EFFICIENCY = 0.96
 SPECIFIC_CHARGE_RATE = 1 #MW
 
 #Export Config
-RESULTS_FILE_NAME = f"results_BC-{BATTERY_CAPACITY}_n-{EFFICIENCY}_{START_DATE}-{END_DATE}.xlsx"
+RESULTS_FILE_NAME = f"results_BC-{BATTERY_CAPACITY}MWH_SCR-{SPECIFIC_CHARGE_RATE}MW_n-{EFFICIENCY}%_{START_DATE}to{END_DATE}.xlsx"
 
 
 #Table Config
