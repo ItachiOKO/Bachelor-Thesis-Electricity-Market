@@ -29,8 +29,10 @@ def add_prints(df, model, battery_capacity, cycles):
     n_cycles = df[CELL_NAMES["buy_volume"]].sum()/battery_capacity
     total_profit_model = pyo.value(model.OBJ)
     profit_per_cycle = total_profit_model/n_cycles
-    print(f"{n_cycles}: Ladezyklen")
-    print(f"Order Profit: {df[CELL_NAMES['order_cost']].sum()} €")
-    print(f"Gesamtprofit_model: {total_profit_model} €")
-    print(f"Profit pro Zyklus: {profit_per_cycle} €")
-    print(f"Profit pro Battery: {profit_per_cycle * cycles} €")
+
+
+    df.attrs["n Cycles"] = n_cycles
+    df.attrs["Total Profit Model"] = total_profit_model
+    df.attrs["Profit per Cycle"] = profit_per_cycle
+    df.attrs["Profit per Battery"] = profit_per_cycle * cycles
+    df.attrs['Order Cost'] = df[CELL_NAMES['order_cost']].sum()

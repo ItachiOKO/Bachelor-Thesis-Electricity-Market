@@ -1,4 +1,5 @@
 import time
+import json
 from optimisation_model import setup_model, solve_model
 from result_processing import process_results
 from load_marketprice_data import create_dataframe
@@ -22,4 +23,5 @@ if __name__ == "__main__":
     print(f"Berrechnungszeit: {round(time.time() - start_time, 1)} Sekunden")
     df = process_results(df, model, BATTERY_CAPACITY, LIFETIME_CYCLES)
     print(df)
+    print(json.dumps(df.attrs, indent=4))
     df.to_excel(RESULTS_FILE_NAME)
