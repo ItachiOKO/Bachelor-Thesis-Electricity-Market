@@ -1,9 +1,9 @@
 import time
 import json
 from optimisation_model import setup_model, solve_model
-from result_processing import process_results
+from result_processing import process_results, export_results
 from load_marketprice_data import create_dataframe
-from config import START_DATE, END_DATE, BATTERY_CAPACITY, LIFETIME_CYCLES, SPECIFIC_CHARGE_RATE, CSV_PATH, SKIPROWS, RESULTS_FILE_NAME, CELL_NAMES
+from config import START_DATE, END_DATE, BATTERY_CAPACITY, LIFETIME_CYCLES, SPECIFIC_CHARGE_RATE, CSV_PATH, SKIPROWS, RESULTS_FILE_NAME_EXCEL, CELL_NAMES, LIFETIME_CYCLES, BATTERY_PRICE, EFFICIENCY, RESULTS_FILE_NAME_PICKLE
 from utils import get_interval_minutes
 
 
@@ -21,7 +21,8 @@ if __name__ == "__main__":
     start_time = time.time()
     model = main_optimisation(df)
     print(f"Berrechnungszeit: {round(time.time() - start_time, 1)} Sekunden")
-    df = process_results(df, model, BATTERY_CAPACITY, LIFETIME_CYCLES)
+    df = process_results(df, model, CELL_NAMES, START_DATE, END_DATE, BATTERY_CAPACITY, LIFETIME_CYCLES, BATTERY_PRICE, EFFICIENCY)
+    export_results(df, RESULTS_FILE_NAME_EXCEL, RESULTS_FILE_NAME_PICKLE)
     print(df)
     print(json.dumps(df.attrs, indent=4))
-    df.to_excel(RESULTS_FILE_NAME)
+

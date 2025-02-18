@@ -28,5 +28,4 @@ if __name__ == '__main__':
     print(df)
     print(f"interval_minutes: {interval_minutes}")
     print(f"n_days: {n_days}")
-
     df.to_excel("market_price_data.xlsx")
