@@ -6,19 +6,21 @@ from config import START_DATE, END_DATE, CSV_PATH, SKIPROWS, CELL_NAMES
 
 
 def create_dataframe(csv_path: str, skiprows: int, start_date: str, end_date: str) -> pd.DataFrame:
-    # CSV einlesen, wobei "date" als String bleibt
     df = pd.read_csv(
         csv_path,
         skiprows=skiprows,
-        names=[CELL_NAMES['date'], CELL_NAMES['market_price']]
+        names=[CELL_NAMES["date"], CELL_NAMES["market_price"]]
     )
-    df[CELL_NAMES['time']] = df[CELL_NAMES['date']].apply(lambda x: x.split("T")[1])  
-    df[CELL_NAMES['date']] = df[CELL_NAMES['date']].apply(lambda x: parser.parse(x, ignoretz=True).date())
-    mask = (df[CELL_NAMES["date"]] >= pd.to_datetime(start_date).date()) & (df[CELL_NAMES["date"]] < pd.to_datetime(end_date).date())
-    filtered_df = df.loc[mask]
-    filtered_df = filtered_df[[CELL_NAMES['date'], CELL_NAMES['time'], CELL_NAMES['market_price']]]
 
-    return filtered_df
+    df[CELL_NAMES["date"]] = pd.to_datetime(df[CELL_NAMES["date"]], utc=True).dt.tz_localize(None)
+
+    start_date = pd.to_datetime(start_date).tz_localize(None)
+    end_date = pd.to_datetime(end_date).tz_localize(None)
+    df = df[(df[CELL_NAMES["date"]] >= start_date) & (df[CELL_NAMES["date"]] < end_date)]
+    df = df.set_index(CELL_NAMES["date"])
+
+    return df
+
 
 
 if __name__ == '__main__':
@@ -28,4 +30,4 @@ if __name__ == '__main__':
     print(df)
     print(f"interval_minutes: {interval_minutes}")
     print(f"n_days: {n_days}")
-    df.to_excel("market_price_data.xlsx")
+    df.to_csv("market_price_data.csv", index=False)

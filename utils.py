@@ -4,9 +4,7 @@ from config import SPECIFIC_CHARGE_RATE, CELL_NAMES
 
 
 def get_interval_minutes(df: pd.DataFrame) -> int:
-    df_copy = df.copy()
-    df_copy[CELL_NAMES['time']] = pd.to_datetime(df_copy[CELL_NAMES['time']], utc=True)
-    diffs = df_copy[CELL_NAMES['time']].diff().dropna()
+    diffs = df.index.to_series().diff().dropna()
     time_interval = diffs.mode()[0]
     return int(time_interval.total_seconds() / 60)
 
