@@ -18,13 +18,13 @@ def setup_model(time_points, market_price_dict, charge_rate):
     model.aging_cost = pyo.Var(model.T, within=pyo.NonNegativeReals)
 
     #Constraints
-    def soc_rule(model, t):
+    def cumulative_soc_rule(model, t):
         if t == min(model.T):
             return model.battery_soc[t] == model.buy_volume[t]*EFFICIENCY - model.sell_volume[t]/EFFICIENCY
         else:
             prev_t = model.T.prev(t)  
             return model.battery_soc[t] == model.battery_soc[prev_t] + model.buy_volume[t]*EFFICIENCY - model.sell_volume[t]/EFFICIENCY
-    model.battery_balance_constraint = pyo.Constraint(model.T, rule=soc_rule)
+    model.cumulative_soc_constraint = pyo.Constraint(model.T, rule=cumulative_soc_rule)
 
     def aging_cost_rule(model, t):
         specific_aging_cost = BATTERY_PRICE / (BATTERY_CAPACITY * LIFETIME_CYCLES) / 2
