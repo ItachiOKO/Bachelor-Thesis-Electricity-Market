@@ -22,7 +22,7 @@ def setup_model(time_points, market_price_dict, prl_price_dict, charge_rate):
 
     add_electricity_exchange_constraints(model) 
     add_prl_constraints(model)
-    add_market_choice_constraint(model, charge_rate)
+    add_market_choice_constraint(model, time_points)
 
     #Objective
     def profit_rule(model):
