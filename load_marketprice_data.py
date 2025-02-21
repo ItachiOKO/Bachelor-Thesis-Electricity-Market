@@ -19,6 +19,8 @@ def create_dataframe(csv_path: str, skiprows: int, start_date: str, end_date: st
     df = df[(df[CELL_NAMES["date"]] >= start_date) & (df[CELL_NAMES["date"]] < end_date)]
     df = df.set_index(CELL_NAMES["date"])
 
+    df[CELL_NAMES["prl_price"]] = 100#(~df.index.normalize().duplicated()).astype(int) * 1000
+
     return df
 
 

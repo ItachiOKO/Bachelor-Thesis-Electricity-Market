@@ -11,7 +11,8 @@ def main_optimisation(df):
     charge_rate = SPECIFIC_CHARGE_RATE * (get_interval_minutes(df)/60)
     time_points = df.index.tolist()
     market_price_dict = df[CELL_NAMES["market_price"]].to_dict()
-    model = setup_model(time_points, market_price_dict, charge_rate)
+    prl_price_dict = df[CELL_NAMES["prl_price"]].to_dict()
+    model = setup_model(time_points, market_price_dict, prl_price_dict, charge_rate)
     solve_model(model)
     return model
 

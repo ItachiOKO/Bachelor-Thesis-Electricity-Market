@@ -23,6 +23,7 @@ def extract_pyo_results_to_df(df, model, cell_names):
     df[cell_names["sell_volume"]] = [pyo.value(model.sell_volume[t]) for t in model.T]
     df[cell_names["battery_soc"]] = [pyo.value(model.battery_soc[t]) for t in model.T]
     df[cell_names["aging_cost"]] = [pyo.value(model.aging_cost[t]) for t in model.T]
+    df[cell_names["prl_capacity"]] = [pyo.value(model.prl_capacity[t]) for t in model.T]
     return df
 
 def add_calculations_to_df(df, cell_names):
