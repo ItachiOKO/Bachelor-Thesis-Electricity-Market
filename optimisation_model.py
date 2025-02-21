@@ -1,6 +1,6 @@
 import pyomo.environ as pyo
 from load_marketprice_data import create_dataframe   
-from config import BATTERY_CAPACITY, EFFICIENCY, BATTERY_PRICE, LIFETIME_CYCLES
+from config import BATTERY_CAPACITY, EFFICIENCY, BATTERY_PRICE, LIFETIME_CYCLES, END_OF_DAY_SOC
 
 
 def solve_model(model):
@@ -31,6 +31,15 @@ def setup_model(time_points, market_price_dict, charge_rate):
         return model.aging_cost[t] == specific_aging_cost * (model.buy_volume[t] * EFFICIENCY + model.sell_volume[t]/EFFICIENCY)
     model.aging_cost_constraint = pyo.Constraint(model.T, rule=aging_cost_rule)
 
+    def end_of_day_soc_rule(model, t):
+        if END_OF_DAY_SOC == 0:
+            return pyo.Constraint.Skip
+        current_date = t.date()
+        daily_steps = [t_ for t_ in model.T if t_.date() == current_date]
+        if t == max(daily_steps):
+            return model.battery_soc[t] == 0.5 * BATTERY_CAPACITY
+        return pyo.Constraint.Skip
+    model.end_of_day_soc_constraint = pyo.Constraint(model.T, rule=end_of_day_soc_rule)
 
     #Objective
     def profit_rule(model):
