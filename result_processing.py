@@ -3,6 +3,7 @@ import pyomo.environ as pyo
 
 from utils import calculate_period_in_days
 
+
 def export_results(df, results_file_name_excel, results_file_name_pickle):
     df.to_pickle(results_file_name_pickle)
     attrs_df = pd.DataFrame(list(df.attrs.items()), columns=['Attribute', 'Value'])

@@ -2,7 +2,7 @@ import datetime
 from dateutil import parser
 import pandas as pd
 from utils import get_interval_minutes, calculate_period_in_days
-from config import START_DATE, END_DATE, CSV_PATH, SKIPROWS, CELL_NAMES
+from config import START_DATE, END_DATE, CSV_PATH, SKIPROWS, CELL_NAMES, PRL_PRICE
 
 
 def create_dataframe(csv_path: str, skiprows: int, start_date: str, end_date: str) -> pd.DataFrame:
@@ -19,7 +19,7 @@ def create_dataframe(csv_path: str, skiprows: int, start_date: str, end_date: st
     df = df[(df[CELL_NAMES["date"]] >= start_date) & (df[CELL_NAMES["date"]] < end_date)]
     df = df.set_index(CELL_NAMES["date"])
 
-    df[CELL_NAMES["prl_price"]] = 100#(~df.index.normalize().duplicated()).astype(int) * 1000
+    df[CELL_NAMES["prl_price"]] = PRL_PRICE#(~df.index.normalize().duplicated()).astype(int) * 1000
 
     return df
 
