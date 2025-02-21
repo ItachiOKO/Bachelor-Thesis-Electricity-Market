@@ -29,7 +29,7 @@ def extract_pyo_results_to_df(df, model, cell_names):
 def add_calculations_to_df(df, cell_names):
     df = df.copy()
     df[cell_names["order_cost"]] = -df[cell_names["buy_volume"]] * df[cell_names["market_price"]] + df[cell_names["sell_volume"]] * df[cell_names["market_price"]]
-    df[cell_names["profit_calc"]] = df[cell_names["sell_volume"]] * df[cell_names["market_price"]] - df[cell_names["buy_volume"]] * df[cell_names["market_price"]] - df[cell_names["aging_cost"]]
+    df[cell_names["profit_calc"]] = df[cell_names["sell_volume"]] * df[cell_names["market_price"]] - df[cell_names["buy_volume"]] * df[cell_names["market_price"]] - df[cell_names["aging_cost"]] + df[cell_names["prl_capacity"]] * df[cell_names["prl_price"]]
     return df
 
 def add_attrs_to_df(df, model, cell_names, start_date, end_date, battery_capacity, cycles, battery_price, efficiency):	
