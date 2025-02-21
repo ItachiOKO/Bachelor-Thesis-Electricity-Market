@@ -10,7 +10,7 @@ def solve_model(model):
 
 def setup_model(time_points, market_price_dict, charge_rate):
     model = pyo.ConcreteModel()
-    model.T = pyo.Set(initialize=time_points)
+    model.T = pyo.Set(initialize=time_points, ordered=True)
     model.market_price = pyo.Param(model.T, initialize=market_price_dict)
     model.buy_volume = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, charge_rate/EFFICIENCY)) 
     model.sell_volume = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, charge_rate*EFFICIENCY))  
