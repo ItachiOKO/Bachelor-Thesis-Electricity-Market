@@ -1,5 +1,4 @@
 import pyomo.environ as pyo
-from load_marketprice_data import create_dataframe   
 from constraints_model import add_electricity_exchange_constraints, add_prl_constraints, add_market_choice_constraint
 from config import BATTERY_CAPACITY, EFFICIENCY, SPECIFIC_AGING_COST, PRL_DAILY_CYCLES
 

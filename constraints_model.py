@@ -1,5 +1,5 @@
 import pyomo.environ as pyo
-from config import BATTERY_CAPACITY, EFFICIENCY, BATTERY_PRICE, LIFETIME_CYCLES, END_OF_DAY_SOC
+from config import BATTERY_CAPACITY, EFFICIENCY, END_OF_DAY_SOC
 
 
 def add_electricity_exchange_constraints(model):

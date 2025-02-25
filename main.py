@@ -1,10 +1,24 @@
 import time
 import json
 from optimisation_model import setup_model, solve_model
-from result_processing import process_results, export_results
+from result_processing import process_results
+from result_export import export_results
 from load_marketprice_data import create_dataframe
-from config import START_DATE, END_DATE, BATTERY_CAPACITY, LIFETIME_CYCLES, SPECIFIC_CHARGE_RATE, CSV_PATH, SKIPROWS, RESULTS_FILE_NAME_EXCEL, CELL_NAMES, LIFETIME_CYCLES, BATTERY_PRICE, EFFICIENCY, RESULTS_FILE_NAME_PICKLE
 from utils import get_interval_minutes
+from config import (
+    BATTERY_CAPACITY,
+    BATTERY_PRICE,
+    CELL_NAMES,
+    CSV_PATH,
+    EFFICIENCY,
+    LIFETIME_CYCLES,
+    RESULTS_FILE_NAME_EXCEL,
+    RESULTS_FILE_NAME_PICKLE,
+    SKIPROWS,
+    SPECIFIC_CHARGE_RATE,
+    START_DATE,
+    END_DATE,
+)
 
 
 def main_optimisation(df):
