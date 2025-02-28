@@ -9,7 +9,7 @@ from config import (
     BATTERY_CAPACITY,
     BATTERY_PRICE,
     CELL_NAMES,
-    CSV_PATH,
+    PATH_MARKET_DATA,
     EFFICIENCY,
     LIFETIME_CYCLES,
     RESULTS_FILE_NAME_EXCEL,
@@ -32,7 +32,7 @@ def main_optimisation(df):
 
 
 if __name__ == "__main__":
-    df = create_dataframe(CSV_PATH, SKIPROWS, START_DATE, END_DATE)
+    df = create_dataframe(PATH_MARKET_DATA, SKIPROWS, START_DATE, END_DATE)
     start_time = time.time()
     model = main_optimisation(df)
     print(f"Berrechnungszeit: {round(time.time() - start_time, 1)} Sekunden")

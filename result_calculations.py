@@ -1,7 +1,7 @@
 import math
 import pyomo.environ as pyo
 from utils import calculate_period_in_days
-from config import PRL_DAILY_CYCLES
+from config import PRL_CYCLES_PER_4h
 
 
 def add_column_calculations_to_df(df, cell_names):
@@ -23,7 +23,7 @@ def add_attrs_calculations_to_df(df, model, cell_names, start_date, end_date, ba
     n_cycles_exchange = df[cell_names["buy_volume"]].sum() * efficiency/battery_capacity
     net_order_value = df[cell_names["order_cost"]].sum()
     #prl
-    n_cycles_prl = df[cell_names["prl_capacity"]].sum() / battery_capacity * PRL_DAILY_CYCLES
+    n_cycles_prl = df[cell_names["prl_capacity"]].sum() / battery_capacity * PRL_CYCLES_PER_4h
     net_prl_value = sum(df[cell_names["prl_capacity"]] * df[cell_names["prl_price"]])
     #profit calculation
     total_profit_simulation = pyo.value(model.OBJ)
