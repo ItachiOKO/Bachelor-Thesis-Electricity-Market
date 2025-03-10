@@ -15,7 +15,7 @@ def setup_model(time_points, market_price_dict, prl_price_dict, charge_rate):
     model.prl_price = pyo.Param(model.T, initialize=prl_price_dict)
     model.buy_volume = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, charge_rate/EFFICIENCY)) 
     model.sell_volume = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, charge_rate*EFFICIENCY))  
-    model.battery_soc = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, 10))
+    model.battery_soc = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, 1))
     model.prl_capacity = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, BATTERY_CAPACITY))
 
     def aging_cost_expr(model, t):
