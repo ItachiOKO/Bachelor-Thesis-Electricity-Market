@@ -18,7 +18,7 @@ def add_column_calculations_to_df(df, cell_names):
     )
     return df
 
-def add_attrs_calculations_to_df(df, model, cell_names, start_date, end_date, battery_capacity, cycles, battery_price, efficiency):	
+def add_attrs_calculations_to_df(df, total_profit_model, cell_names, start_date, end_date, battery_capacity, cycles, battery_price, efficiency):	
     #exchange
     n_cycles_exchange = df[cell_names["buy_volume"]].sum() * efficiency/battery_capacity
     net_order_value = df[cell_names["order_cost"]].sum()
@@ -26,11 +26,10 @@ def add_attrs_calculations_to_df(df, model, cell_names, start_date, end_date, ba
     n_cycles_prl = df[cell_names["prl_capacity"]].sum() / battery_capacity * PRL_CYCLES_PER_4h
     net_prl_value = sum(df[cell_names["prl_capacity"]] * df[cell_names["prl_price"]])
     #profit calculation
-    total_profit_simulation = pyo.value(model.OBJ)
-    profit_per_cycle = total_profit_simulation/(n_cycles_exchange + n_cycles_prl)
+    profit_per_cycle = total_profit_model/(n_cycles_exchange + n_cycles_prl)
     profit_per_battery = profit_per_cycle * cycles
     days = calculate_period_in_days(start_date, end_date)
-    amortization_years = battery_price / total_profit_simulation * days/365 #years
+    amortization_years = battery_price / total_profit_model * days/365 #years
     battery_lifetime = cycles/(n_cycles_exchange + n_cycles_prl) * days/365 #years
 
 
@@ -39,7 +38,7 @@ def add_attrs_calculations_to_df(df, model, cell_names, start_date, end_date, ba
     df.attrs['Net order Value'] = net_order_value
     df.attrs["n Cycles PRL"] = n_cycles_prl
     df.attrs['Net PRL Value'] = net_prl_value
-    df.attrs["Total Profit"] = total_profit_simulation
+    df.attrs["Total Profit"] = total_profit_model
     df.attrs["Profit per Cycle"] = profit_per_cycle
     df.attrs["Profit per Battery"] = profit_per_battery
     df.attrs["Amortization Years"] = amortization_years

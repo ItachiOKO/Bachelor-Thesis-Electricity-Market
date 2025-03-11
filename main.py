@@ -1,7 +1,9 @@
 import time
 import json
+import pandas as pd
+import pyomo.environ as pyo
 from optimisation_model import setup_model, solve_model
-from result_processing import process_results
+from result_processing import process_results, extract_pyo_results_to_df
 from result_export import export_results
 from load_marketprice_data import create_dataframe
 from utils import get_interval_minutes
@@ -31,13 +33,47 @@ def main_optimisation(df):
     return model
 
 
+def optimize_by_month(df):
+    monthly_results = []
+    models = []  
+    
+    for month, df_month in df.groupby(pd.Grouper(freq='M')):
+        if df_month.empty:
+            continue
+        
+        print(f"Optimierung für {month.strftime('%Y-%m')}")
+        model = main_optimisation(df_month)
+        models.append(model)  
+        
+        df_extracted_month = extract_pyo_results_to_df(df_month, model, CELL_NAMES)
+        monthly_results.append(df_extracted_month)
+    
+    final_df_extracted = pd.concat(monthly_results)
+    return final_df_extracted, models 
+
+
 if __name__ == "__main__":
     df = create_dataframe(PATH_MARKET_DATA, SKIPROWS, START_DATE, END_DATE)
     start_time = time.time()
-    model = main_optimisation(df)
-    print(f"Berrechnungszeit: {round(time.time() - start_time, 1)} Sekunden")
-    df = process_results(df, model, CELL_NAMES, START_DATE, END_DATE, BATTERY_CAPACITY, LIFETIME_CYCLES, BATTERY_PRICE, EFFICIENCY)
-    export_results(df, RESULTS_FILE_NAME_EXCEL, RESULTS_FILE_NAME_PICKLE)
-    print(df)
-    print(json.dumps(df.attrs, indent=4))
+    final_df_extracted, models = optimize_by_month(df)
+    print(f"Berechnungszeit: {round(time.time() - start_time, 1)} Sekunden")
+    if models:
+        total_profit_model = sum(pyo.value(m.OBJ) for m in models)
+    else:
+        print("WARNUNG: Kein Modell gefunden. Total Profit wird auf 0 gesetzt. Oder kein Profit optimiert.")
+        total_profit_model = 0  
 
+    final_df_results = process_results(
+        final_df_extracted, 
+        total_profit_model=total_profit_model,  # Ein Modell wird mitgegeben
+        cell_names=CELL_NAMES, 
+        start_date=START_DATE, 
+        end_date=END_DATE, 
+        battery_capacity=BATTERY_CAPACITY, 
+        cycles=LIFETIME_CYCLES, 
+        battery_price=BATTERY_PRICE, 
+        efficiency=EFFICIENCY
+    )
+    export_results(final_df_results, RESULTS_FILE_NAME_EXCEL, RESULTS_FILE_NAME_PICKLE)
+    print(final_df_results)
+    print(json.dumps(final_df_results.attrs, indent=4))
