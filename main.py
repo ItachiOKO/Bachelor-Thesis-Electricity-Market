@@ -3,8 +3,7 @@ import json
 import pandas as pd
 import pyomo.environ as pyo
 from optimisation_model import setup_model, solve_model
-from result_processing import process_results 
-from extraction_model import extract_pyo_results_to_df
+from result_processing import process_results, extract_pyo_results_to_df
 from result_export import export_results
 from load_marketprice_data import create_dataframe
 from utils import get_interval_minutes
@@ -24,30 +23,30 @@ from config import (
 )
 
 
-def main_optimisation(df):
-    charge_rate = SPECIFIC_CHARGE_RATE * (get_interval_minutes(df)/60)
-    time_points = df.index.tolist()
-    market_price_dict = df[CELL_NAMES["market_price"]].to_dict()
-    prl_price_dict = df[CELL_NAMES["prl_price"]].to_dict()
+def main_optimisation(df_data_month):
+    charge_rate = SPECIFIC_CHARGE_RATE * (get_interval_minutes(df_data_month)/60)
+    time_points = df_data_month.index.tolist()
+    market_price_dict = df_data_month[CELL_NAMES["market_price"]].to_dict()
+    prl_price_dict = df_data_month[CELL_NAMES["prl_price"]].to_dict()
     model = setup_model(time_points, market_price_dict, prl_price_dict, charge_rate)
     solve_model(model)
     return model
 
 
-def optimize_by_month(df):
+def optimize_by_month(df_data):
     monthly_results = []
     models = []  
     
-    for month, df_month in df.groupby(pd.Grouper(freq='M')):
-        if df_month.empty:
+    for month, df_data_month in df_data.groupby(pd.Grouper(freq='M')):
+        if df_data_month.empty:
             print(f"Keine Daten für {month}")
             continue
         
         print(f"Optimierung für {month.strftime('%Y-%m')}")
-        model = main_optimisation(df_month)
-        models.append(model)  
+        model_month = main_optimisation(df_data_month)
+        models.append(model_month)  
         
-        df_extracted_month = extract_pyo_results_to_df(df_month, model, CELL_NAMES)
+        df_extracted_month = extract_pyo_results_to_df(df_data_month, model_month, CELL_NAMES)
         monthly_results.append(df_extracted_month)
     
     final_df_extracted = pd.concat(monthly_results)
