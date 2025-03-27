@@ -3,7 +3,8 @@ import json
 import pandas as pd
 import pyomo.environ as pyo
 from optimisation_model import setup_model, solve_model
-from result_processing import process_results, extract_pyo_results_to_df
+from result_processing import process_results 
+from extraction_model import extract_pyo_results_to_df
 from result_export import export_results
 from load_marketprice_data import create_dataframe
 from utils import get_interval_minutes
@@ -39,6 +40,7 @@ def optimize_by_month(df):
     
     for month, df_month in df.groupby(pd.Grouper(freq='M')):
         if df_month.empty:
+            print(f"Keine Daten für {month}")
             continue
         
         print(f"Optimierung für {month.strftime('%Y-%m')}")
@@ -60,8 +62,7 @@ if __name__ == "__main__":
     if models:
         total_profit_model = sum(pyo.value(m.OBJ) for m in models)
     else:
-        print("WARNUNG: Kein Modell gefunden. Total Profit wird auf 0 gesetzt. Oder kein Profit optimiert.")
-        total_profit_model = 0  
+        raise ValueError("Keine Modelle vorhanden")
 
     final_df_results = process_results(
         final_df_extracted, 
