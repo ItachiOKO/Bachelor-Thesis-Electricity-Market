@@ -15,6 +15,9 @@ def create_dataframe(start_date, end_date):
     df_fcr_price = load_fcr_data()
     df_master = df_master.join(df_market_price, how='left')
     df_master = df_master.join(df_fcr_price, how='left')
+
+    df_master.index.name = CELL_NAMES["date"]
+    df_master.fillna(0, inplace=True)
     return df_master
 
 def create_master_df(start_date, end_date):
