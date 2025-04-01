@@ -26,8 +26,11 @@ from config import (
 def main_optimisation(df_data_month):
     charge_rate = SPECIFIC_CHARGE_RATE * (get_interval_minutes(df_data_month)/60)
     time_points = df_data_month.index.tolist()
+    #print(time_points)
     market_price_dict = df_data_month[CELL_NAMES["market_price"]].to_dict()
+    #print(market_price_dict)
     prl_price_dict = df_data_month[CELL_NAMES["prl_price"]].to_dict()
+    print(prl_price_dict)
     model = setup_model(time_points, market_price_dict, prl_price_dict, charge_rate)
     solve_model(model)
     return model
@@ -54,7 +57,7 @@ def optimize_by_month(df_data):
 
 
 if __name__ == "__main__":
-    df = create_dataframe(PATH_MARKET_DATA, SKIPROWS, START_DATE, END_DATE)
+    df = create_dataframe(START_DATE, END_DATE)
     start_time = time.time()
     final_df_extracted, models = optimize_by_month(df)
     print(f"Berechnungszeit: {round(time.time() - start_time, 1)} Sekunden")
