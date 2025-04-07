@@ -1,5 +1,4 @@
 import pandas as pd
-
 from config import (
     START_DATE,
     END_DATE,
@@ -8,6 +7,7 @@ from config import (
     SKIPROWS,
     CELL_NAMES,
 )
+from utils import convert_datetime_to_string
 
 def create_dataframe(start_date, end_date):
     df_master = create_master_df(start_date, end_date)
@@ -64,3 +64,7 @@ def load_fcr_data() -> pd.DataFrame:
 if __name__ == "__main__":
     df = create_dataframe(START_DATE, END_DATE)
     print(df)
+    # to excel
+
+    formated_df = convert_datetime_to_string(df)       
+    formated_df.to_excel("market_price_data.xlsx", index=True, sheet_name="Market Price Data")

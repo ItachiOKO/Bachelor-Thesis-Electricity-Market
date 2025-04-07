@@ -13,3 +13,18 @@ def calculate_period_in_days(start_date: str, end_date: str) -> int:
 
 def get_charge_rate(interval_minutes):
     return SPECIFIC_CHARGE_RATE * (interval_minutes/60)
+
+
+def convert_datetime_to_string(df: pd.DataFrame) -> pd.DataFrame:
+    formated_df = df.copy()
+    formatted_index = []
+    for idx in formated_df.index:
+        timestamp_str = idx.strftime("%Y-%m-%d %H:%M:%S%z")
+        if timestamp_str[-5:]:  # If there's a timezone offset
+            formatted_str = timestamp_str[:-2] + ":" + timestamp_str[-2:]
+            formatted_index.append(formatted_str)
+        else:
+            formatted_index.append(timestamp_str)
+    
+    formated_df.index = formatted_index
+    return formated_df
