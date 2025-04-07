@@ -5,7 +5,7 @@ from config import BATTERY_CAPACITY, EFFICIENCY, SPECIFIC_AGING_COST, PRL_CYCLES
 
 def solve_model(model):
     solver = pyo.SolverFactory('glpk') 
-    result = solver.solve(model)
+    result = solver.solve(model, tee=False)
     return result
 
 def setup_model(time_points, market_price_dict, prl_price_dict, charge_rate):

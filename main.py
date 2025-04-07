@@ -1,3 +1,6 @@
+import logging
+logging.getLogger('pyomo').setLevel(logging.WARNING)
+
 import time
 import json
 import pandas as pd
@@ -54,7 +57,8 @@ def optimize_by_month(df_data):
 
 
 if __name__ == "__main__":
-    df = create_dataframe(START_DATE, END_DATE)
+    df = create_dataframe(START_DATE, END_DATE, debug=False)
+    print(df)
     start_time = time.time()
     final_df_extracted, models = optimize_by_month(df)
     print(f"Berechnungszeit: {round(time.time() - start_time, 1)} Sekunden")
