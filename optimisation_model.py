@@ -1,6 +1,6 @@
 import pyomo.environ as pyo
 from constraints_model import add_electricity_exchange_constraints, add_market_choice_constraint
-from config import BATTERY_CAPACITY, EFFICIENCY, SPECIFIC_AGING_COST, PRL_CYCLES_PER_4h
+from config import BATTERY_CAPACITY, EFFICIENCY, SPECIFIC_AGING_COST, PRL_CYCLES_PER_4h, ENABLE_EXCHANGE_MARKET, ENABLE_PRL_MARKET
 
 
 def solve_model(model):
@@ -37,7 +37,7 @@ def setup_model(time_points, market_price_dict, prl_price_dict, charge_rate):
             model.prl_price[t] * model.prl_capacity[t]
             for t in model.T
         )
-        return order_profit_sum + prl_profit_sum
+        return ENABLE_EXCHANGE_MARKET * order_profit_sum + ENABLE_PRL_MARKET * prl_profit_sum
     model.OBJ = pyo.Objective(rule=profit_rule, sense=pyo.maximize)
     return model
 
