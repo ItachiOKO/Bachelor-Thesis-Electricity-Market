@@ -58,7 +58,9 @@ def optimize_by_month(df_data):
 
 if __name__ == "__main__":
     df = create_dataframe(START_DATE, END_DATE, debug=False)
-    print(df)
+
+
+
     start_time = time.time()
     final_df_extracted, models = optimize_by_month(df)
     print(f"Berechnungszeit: {round(time.time() - start_time, 1)} Sekunden")
@@ -81,3 +83,7 @@ if __name__ == "__main__":
     export_results(final_df_results, RESULTS_FILE_NAME_EXCEL, RESULTS_FILE_NAME_PICKLE)
     print(final_df_results)
     print(json.dumps(final_df_results.attrs, indent=4))
+
+
+
+

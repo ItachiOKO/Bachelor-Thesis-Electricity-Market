@@ -1,5 +1,5 @@
 import pyomo.environ as pyo
-from config import BATTERY_CAPACITY, EFFICIENCY
+from config import BATTERY_CAPACITY, EFFICIENCY, SPECIFIC_CHARGE_RATE
 
 
 def add_electricity_exchange_constraints(model):
@@ -32,17 +32,19 @@ def add_market_choice_constraint(model, time_points):
     model.market_mode_sell_constraint = pyo.Constraint(model.T, rule=market_mode_sell_rule)
     
     def prl_mode_rule(model, t):
-        return model.prl_capacity[t] <= model.prl_capacity[t].ub * (1 - model.mode[time_to_interval[t]])
+        return model.prl_power[t] <= model.prl_power[t].ub * (1 - model.mode[time_to_interval[t]])
     model.prl_mode_constraint = pyo.Constraint(model.T, rule=prl_mode_rule)
     
-    M = 1
+   
+    M = 0.5 / BATTERY_CAPACITY
     def battery_soc_lower_rule(model, t):
-        return model.battery_soc[t] >= 0.5 - M * model.mode[time_to_interval[t]]
+        return model.battery_soc[t] >= SPECIFIC_CHARGE_RATE * (0.5/BATTERY_CAPACITY) - M * model.mode[time_to_interval[t]]
     model.battery_soc_lower_constraint = pyo.Constraint(model.T, rule=battery_soc_lower_rule)
 
     def battery_soc_upper_rule(model, t):
-        return model.battery_soc[t] <= 0.5 + M * model.mode[time_to_interval[t]]
+        return model.battery_soc[t] <= 1 - (SPECIFIC_CHARGE_RATE * (0.5/BATTERY_CAPACITY)) + M * model.mode[time_to_interval[t]]
     model.battery_soc_upper_constraint = pyo.Constraint(model.T, rule=battery_soc_upper_rule)
+
 
 
 

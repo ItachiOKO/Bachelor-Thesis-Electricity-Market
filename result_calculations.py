@@ -1,7 +1,7 @@
 import math
 import pyomo.environ as pyo
 from utils import calculate_period_in_days
-from config import PRL_CYCLES_PER_4h
+from config import SPECIFIC_PRL_ENERGY_NEED_4H_CYCLE, SPECIFIC_CHARGE_RATE
 
 
 def add_column_calculations_to_df(df, cell_names):
@@ -20,10 +20,10 @@ def add_column_calculations_to_df(df, cell_names):
 
 def add_attrs_calculations_to_df(df, total_profit_model, cell_names, start_date, end_date, battery_capacity, cycles, battery_price, efficiency):	
     #exchange
-    n_cycles_exchange = df[cell_names["buy_volume"]].sum() * efficiency/battery_capacity
+    n_cycles_exchange = (df[cell_names["buy_volume"]].sum() * efficiency) / battery_capacity
     net_order_value = df[cell_names["order_cost"]].sum()
     #prl
-    n_cycles_prl = df[cell_names["prl_capacity"]].sum() / battery_capacity * PRL_CYCLES_PER_4h
+    n_cycles_prl = (df[cell_names["prl_capacity"]].sum() * SPECIFIC_PRL_ENERGY_NEED_4H_CYCLE) / battery_capacity 
     net_prl_value = sum(df[cell_names["prl_capacity"]] * df[cell_names["prl_price"]])
     #profit calculation
     profit_per_cycle = total_profit_model/(n_cycles_exchange + n_cycles_prl)
