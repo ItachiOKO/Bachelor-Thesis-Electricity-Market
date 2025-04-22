@@ -57,6 +57,7 @@ def optimize_by_month(df_data):
 
 
 if __name__ == "__main__":
+    
     df = create_dataframe(START_DATE, END_DATE, debug=False)
 
 
