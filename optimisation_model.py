@@ -4,7 +4,8 @@ from config import BATTERY_CAPACITY, EFFICIENCY, SPECIFIC_AGING_COST, SPECIFIC_P
 
 
 def solve_model(model):
-    solver = pyo.SolverFactory('glpk') 
+    #solver = pyo.SolverFactory('glpk') 
+    solver = pyo.SolverFactory('gurobi')  
     result = solver.solve(model, tee=False)
     return result
 

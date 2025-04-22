@@ -40,7 +40,7 @@ def optimize_by_month(df_data):
     monthly_results = []
     models = []  
     
-    for month, df_data_month in df_data.groupby(pd.Grouper(freq='M')):
+    for month, df_data_month in df_data.groupby(pd.Grouper(freq='12M')):
         if df_data_month.empty:
             print(f"Keine Daten für {month}")
             continue
