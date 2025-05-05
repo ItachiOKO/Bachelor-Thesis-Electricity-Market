@@ -25,18 +25,18 @@ def calculate_investment_costs():
     construction_allowance = SPECIFIC_CONSTRUCTION_ALLOWANCE_INVEST * SYSTEM_POWER
     grid_connection_cost = SPECIFIC_GRID_CONNECTION_INVEST * SYSTEM_POWER
 
-    total_investment_costs = (
+    total_invest = (
         battery_cost + inverter_cost + transformer_cost +
         construction_allowance + grid_connection_cost
     )
     
-    return total_investment_costs
+    return total_invest
 
 
 
 def calculate_annual_costs():
-    total_investment_costs = calculate_investment_costs()
-    insurance_cost = INSURANCE_PERCENTAGE * (total_investment_costs - SPECIFIC_CONSTRUCTION_ALLOWANCE_INVEST * SYSTEM_POWER) # nur Hardware wird versichert
+    total_invest = calculate_investment_costs()
+    insurance_cost = INSURANCE_PERCENTAGE * (total_invest - SPECIFIC_CONSTRUCTION_ALLOWANCE_INVEST * SYSTEM_POWER) # nur Hardware wird versichert
     technical_management_cost = SPECIFIC_TECHNICAL_MANAGEMENT_COST * SYSTEM_POWER
     maintenance_cost = SPECIFIC_MAINTENANCE_COST * SYSTEM_POWER
     repairs_cost = SPECIFIC_REPAIRS_COST * SYSTEM_POWER
