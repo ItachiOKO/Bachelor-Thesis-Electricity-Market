@@ -1,7 +1,7 @@
 import math
 import pyomo.environ as pyo
 from utils import calculate_period_in_days
-from config import SPECIFIC_PRL_ENERGY_NEED_4H_CYCLE, SPECIFIC_CHARGE_RATE
+from config import SPECIFIC_PRL_ENERGY_NEED_4H_CYCLE, SYSTEM_POWER
 
 
 def add_column_calculations_to_df(df, cell_names):

@@ -20,14 +20,14 @@ from config import (
     RESULTS_FILE_NAME_EXCEL,
     RESULTS_FILE_NAME_PICKLE,
     SKIPROWS,
-    SPECIFIC_CHARGE_RATE,
+    SYSTEM_POWER,
     START_DATE,
     END_DATE,
 )
 
 
 def main_optimisation(df_data_month):
-    charge_rate = SPECIFIC_CHARGE_RATE * (get_interval_minutes(df_data_month)/60)
+    charge_rate = SYSTEM_POWER * (get_interval_minutes(df_data_month)/60)
     time_points = df_data_month.index.tolist()
     market_price_dict = df_data_month[CELL_NAMES["market_price"]].to_dict()
     prl_price_dict = df_data_month[CELL_NAMES["prl_price"]].to_dict()

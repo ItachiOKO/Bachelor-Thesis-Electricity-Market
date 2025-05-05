@@ -3,7 +3,7 @@ from constraints_model import add_electricity_exchange_constraints, add_market_c
 from config import (
     BATTERY_CAPACITY, EFFICIENCY, SPECIFIC_AGING_COST,
     SPECIFIC_PRL_ENERGY_NEED_4H_CYCLE, ENABLE_EXCHANGE_MARKET,
-    ENABLE_PRL_MARKET, SPECIFIC_CHARGE_RATE
+    ENABLE_PRL_MARKET, SYSTEM_POWER
 )
 
 ##### Steuern #####
@@ -27,7 +27,7 @@ def setup_model(time_points, market_price_dict, prl_price_dict, charge_rate):
     model.buy_volume   = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, charge_rate))
     model.sell_volume  = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, charge_rate*EFFICIENCY))
     model.battery_soc  = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, 1))
-    model.prl_power    = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, SPECIFIC_CHARGE_RATE))
+    model.prl_power    = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, SYSTEM_POWER))
 
 
 
