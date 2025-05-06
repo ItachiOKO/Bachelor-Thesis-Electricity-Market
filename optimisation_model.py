@@ -29,6 +29,7 @@ def setup_model(time_points, market_price_dict, prl_price_dict, charge_rate):
     _add_technical_constraints(model, time_points)
     _define_profit_expressions(model)
     _add_tax_constraints(model)
+    _define_tax_expression(model)
     _define_objective(model)
 
     return model
@@ -45,9 +46,8 @@ def _define_variables(model, charge_rate):
     model.battery_soc = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, 1))
     model.prl_power   = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, SYSTEM_POWER))
 
-    model.Base  = pyo.Var(domain=pyo.NonNegativeReals)
-    model.delta = pyo.Var(domain=pyo.Binary)
-    model.Tax   = pyo.Var(domain=pyo.NonNegativeReals)
+    model.tax_base  = pyo.Var(domain=pyo.NonNegativeReals)
+
 
 
 def _define_aging_costs(model):
@@ -79,24 +79,20 @@ def _define_profit_expressions(model):
             for t in model.T
         )
     )
-    model.operative_cashflow = pyo.Expression(
-        expr = model.exchange_profit + model.prl_profit - model.aging_cost_sum
-    )
 
 
 def _add_tax_constraints(model):
-    # Steuerbasis: Base = max(Profit - S, 0)
+    # Tax Base = max(Profit - S, 0)
     profit = model.exchange_profit + model.prl_profit
-    model.b1 = pyo.Constraint(expr = model.Base >= profit - S)
-    model.b2 = pyo.Constraint(expr = model.Base <= profit - S + M * (1 - model.delta))
-    model.b3 = pyo.Constraint(expr = model.Base <= M * model.delta)
+    model.c1 = pyo.Constraint(expr = model.tax_base >= profit - S)
+    model.c2 = pyo.Constraint(expr = model.tax_base >= 0)
 
-    # Steuerberechnung: Tax = tau * Base
-    model.t1 = pyo.Constraint(expr = model.Tax == tau * model.Base)
+def _define_tax_expression(model):
+    model.Tax = pyo.Expression(expr = tau * model.tax_base)
 
 
 def _define_objective(model):
-    def _profit_rule(m):
-        return m.exchange_profit + m.prl_profit - m.aging_cost_sum - m.Tax
+    def _profit_rule(model):
+        return model.exchange_profit + model.prl_profit - model.aging_cost_sum - model.Tax
 
     model.OBJ = pyo.Objective(rule=_profit_rule, sense=pyo.maximize)
