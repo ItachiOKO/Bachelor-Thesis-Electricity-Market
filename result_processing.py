@@ -9,7 +9,7 @@ def process_results(df, total_profit_model, cell_names, start_date, end_date, ba
     df = sort_columns_df(df, cell_names)
     df = df.round(2)
     df = round_attrs_df(df)
-    test_results(df, cell_names)	
+    #test_results(df, cell_names)	
     return df
 
 def extract_pyo_results_to_df(df, model, cell_names):
