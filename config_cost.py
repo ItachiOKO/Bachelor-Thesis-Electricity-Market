@@ -9,7 +9,7 @@ SPECIFIC_GRID_CONNECTION_INVEST = 5000  # €/MW
 
 ## Laufende Betriebskosten (OPEX, jährlich)
 # Betriebskosten = 20-40K€ pro MW pro Jahr (alles zusammen); Quelle: Torsten Batteriespeicherinfos
-INSURANCE_PERCENTAGE = 0.01  # % der Investitionskosten (abzüglich CONSTRUCTION_ALLOWANCE_INVEST)
+INSURANCE_RATE = 0.01  # % der Investitionskosten (abzüglich CONSTRUCTION_ALLOWANCE_INVEST)
 SPECIFIC_TECHNICAL_MANAGEMENT_COST = 3000 # €/MW pro Jahr
 SPECIFIC_MAINTENANCE_COST = 3000  # €/MW pro Jahr
 SPECIFIC_REPAIRS_COST = 3000 # €/MW pro Jahr
@@ -17,5 +17,5 @@ SPECIFIC_MEASUREMENTS_COST = 3000 # €/MW pro Jahr
 ACCOUNTING_COST = 3000 # € pro Jahr
 
 ## Taxes
-TAXES = 0.20 #Steuersatz
+TAX_RATE = 0.20 # % 
 DEPRECIATION_YEARS = 10 #Abschreibungsdauer in Jahren

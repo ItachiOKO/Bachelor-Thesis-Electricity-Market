@@ -1,5 +1,6 @@
 import pyomo.environ as pyo
 from config import BATTERY_CAPACITY, EFFICIENCY, SYSTEM_POWER
+from cost_calculator import calculate_depreciation_amount
 
 
 def add_electricity_exchange_constraints(model):
@@ -46,9 +47,11 @@ def add_market_choice_constraint(model, time_points):
     model.battery_soc_upper_constraint = pyo.Constraint(model.T, rule=battery_soc_upper_rule)
 
 
-
-
-
+def add_tax_constraints(model):
+    s = calculate_depreciation_amount()
+    profit = model.exchange_profit + model.prl_profit
+    model.c1 = pyo.Constraint(expr = model.tax_base >= profit - s)
+    model.c2 = pyo.Constraint(expr = model.tax_base >= 0)
 
 
 

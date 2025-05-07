@@ -1,5 +1,5 @@
 import pyomo.environ as pyo
-from constraints_model import add_electricity_exchange_constraints, add_market_choice_constraint
+from constraints_model import add_electricity_exchange_constraints, add_market_choice_constraint, add_tax_constraints
 from config import (
     BATTERY_CAPACITY,
     EFFICIENCY,
@@ -7,11 +7,7 @@ from config import (
     SPECIFIC_PRL_ENERGY_NEED_4H_CYCLE,
     SYSTEM_POWER
 )
-
-# Steuern und Parameter
-tau = 0.20
-S   = 10000
-M   = 1e6
+from config_cost import TAX_RATE
 
 
 def solve_model(model):
@@ -26,10 +22,9 @@ def setup_model(time_points, market_price_dict, prl_price_dict, charge_rate):
     _set_data(model, market_price_dict, prl_price_dict)
     _define_variables(model, charge_rate)
     _define_aging_costs(model)
-    _add_technical_constraints(model, time_points)
     _define_profit_expressions(model)
-    _add_tax_constraints(model)
     _define_tax_expression(model)
+    _add_constraints(model, time_points)
     _define_objective(model)
 
     return model
@@ -49,7 +44,6 @@ def _define_variables(model, charge_rate):
     model.tax_base  = pyo.Var(domain=pyo.NonNegativeReals)
 
 
-
 def _define_aging_costs(model):
     def _aging_cost_expr(m, t):
         c_exc = SPECIFIC_AGING_COST * (m.buy_volume[t] * EFFICIENCY + m.sell_volume[t] / EFFICIENCY)
@@ -58,11 +52,6 @@ def _define_aging_costs(model):
 
     model.aging_cost     = pyo.Expression(model.T, rule=_aging_cost_expr)
     model.aging_cost_sum = pyo.Expression(expr=sum(model.aging_cost[t] for t in model.T))
-
-
-def _add_technical_constraints(model, time_points):
-    add_electricity_exchange_constraints(model)
-    add_market_choice_constraint(model, time_points)
 
 
 def _define_profit_expressions(model):
@@ -80,15 +69,8 @@ def _define_profit_expressions(model):
         )
     )
 
-
-def _add_tax_constraints(model):
-    # Tax Base = max(Profit - S, 0)
-    profit = model.exchange_profit + model.prl_profit
-    model.c1 = pyo.Constraint(expr = model.tax_base >= profit - S)
-    model.c2 = pyo.Constraint(expr = model.tax_base >= 0)
-
 def _define_tax_expression(model):
-    model.Tax = pyo.Expression(expr = tau * model.tax_base)
+    model.Tax = pyo.Expression(expr = TAX_RATE * model.tax_base)
 
 
 def _define_objective(model):
@@ -96,3 +78,9 @@ def _define_objective(model):
         return model.exchange_profit + model.prl_profit - model.aging_cost_sum - model.Tax
 
     model.OBJ = pyo.Objective(rule=_profit_rule, sense=pyo.maximize)
+
+
+def _add_constraints(model, time_points):
+    add_electricity_exchange_constraints(model)
+    add_market_choice_constraint(model, time_points)
+    add_tax_constraints(model)

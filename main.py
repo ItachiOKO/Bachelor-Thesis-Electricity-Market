@@ -36,7 +36,7 @@ def main_optimisation(df_data_month):
     return model
 
 
-def optimize_by_month(df_data):
+def optimize_by_year(df_data):
     monthly_results = []
     models = []  
     
@@ -60,10 +60,8 @@ if __name__ == "__main__":
     
     df = create_dataframe(START_DATE, END_DATE, debug=False)
 
-
-
     start_time = time.time()
-    final_df_extracted, models = optimize_by_month(df)
+    final_df_extracted, models = optimize_by_year(df)
     print(f"Berechnungszeit: {round(time.time() - start_time, 1)} Sekunden")
     if models:
         total_profit_model = sum(pyo.value(m.OBJ) for m in models)

@@ -4,13 +4,12 @@ from config_cost import (
     SPECIFIC_TRANSFORMER_INVEST,
     SPECIFIC_CONSTRUCTION_ALLOWANCE_INVEST,
     SPECIFIC_GRID_CONNECTION_INVEST,
-    INSURANCE_PERCENTAGE,
+    INSURANCE_RATE,
     SPECIFIC_TECHNICAL_MANAGEMENT_COST,  
     SPECIFIC_MAINTENANCE_COST,
     SPECIFIC_REPAIRS_COST,
     SPECIFIC_MEASUREMENTS_COST,
     ACCOUNTING_COST,
-    TAXES,
     DEPRECIATION_YEARS,
 
 )
@@ -33,10 +32,9 @@ def calculate_investment_costs():
     return total_invest
 
 
-
-def calculate_annual_costs():
+def calculate_annual_cost():
     total_invest = calculate_investment_costs()
-    insurance_cost = INSURANCE_PERCENTAGE * (total_invest - SPECIFIC_CONSTRUCTION_ALLOWANCE_INVEST * SYSTEM_POWER) # nur Hardware wird versichert
+    insurance_cost = INSURANCE_RATE * (total_invest - SPECIFIC_CONSTRUCTION_ALLOWANCE_INVEST * SYSTEM_POWER) # nur Hardware wird versichert
     technical_management_cost = SPECIFIC_TECHNICAL_MANAGEMENT_COST * SYSTEM_POWER
     maintenance_cost = SPECIFIC_MAINTENANCE_COST * SYSTEM_POWER
     repairs_cost = SPECIFIC_REPAIRS_COST * SYSTEM_POWER
@@ -49,3 +47,9 @@ def calculate_annual_costs():
     )
     
     return total_annual_costs
+
+
+def calculate_depreciation_amount():
+    total_invest = calculate_investment_costs()
+    annual_cost = calculate_annual_cost()
+    return (total_invest / DEPRECIATION_YEARS) + annual_cost
