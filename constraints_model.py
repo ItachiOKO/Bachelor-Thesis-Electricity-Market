@@ -20,7 +20,7 @@ def add_prl_constraints(model):
 def add_market_choice_constraint(model, time_points):
     unique_intervals = sorted({(t.date(), t.hour // 4) for t in time_points})
     model.D4 = pyo.Set(initialize=unique_intervals, ordered=True)
-    model.mode = pyo.Var(model.D4, domain=pyo.Binary)
+    model.mode = pyo.Var(model.D4, domain=pyo.Binary) # 0 = PRL, 1 = Market
 
     time_to_interval = {t: (t.date(), t.hour // 4) for t in time_points}
 
@@ -50,14 +50,27 @@ def add_market_choice_constraint(model, time_points):
 def add_tax_constraints(model):
     s = calculate_depreciation_amount()
     profit = model.exchange_profit + model.prl_profit
+    # tax_base = max(0, profit - s)
     model.c1 = pyo.Constraint(expr = model.tax_base >= profit - s)
     model.c2 = pyo.Constraint(expr = model.tax_base >= 0)
 
 
 
+#1. Fall: soc >= 1MW * (0,5/1MWh) - 0,5/1MWh * mode
+#         soc >=       0,5 - 0,5*mode
+
+
+#2. Fall: soc <= 1MW * (0,5/1MWh) - 0,5/1MWh * mode
+#         soc <=       0,5 - 0,5*mode
 
 
 
+
+# prl_power = 1-soc * 2C
+# prl_power = soc * 2C
+
+# prl_power_helper <= (1-soc) *2C * (1-mode)
+# prl_power_helper <= soc * 2C * (1-mode)
 
 
 
