@@ -6,7 +6,7 @@ from result_calculations import add_column_calculations_to_df, add_attrs_calcula
 def process_results(df, total_profit_model, cell_names, start_date, end_date, battery_capacity, cycles, battery_price, efficiency):
     df = add_column_calculations_to_df(df, cell_names)
     df = add_attrs_calculations_to_df(df, total_profit_model, cell_names, start_date, end_date,  battery_capacity, cycles, battery_price, efficiency)
-    df = sort_columns_df(df, cell_names)
+    #df = sort_columns_df(df, cell_names)
     df = df.round(2)
     df = round_attrs_df(df)
     #test_results(df, cell_names)	
@@ -19,6 +19,8 @@ def extract_pyo_results_to_df(df, model, cell_names):
     df[cell_names["battery_soc"]] = [pyo.value(model.battery_soc[t]) for t in model.T]
     df[cell_names["aging_cost"]] = [pyo.value(model.aging_cost[t]) for t in model.T]
     df[cell_names["prl_capacity"]] = [pyo.value(model.prl_power[t]) for t in model.T]
+    df[cell_names["srl_power_pos"]] = [pyo.value(model.srl_price_pos[t]) for t in model.T]
+    df[cell_names["srl_power_neg"]] = [pyo.value(model.srl_price_neg[t]) for t in model.T]
     return df
 
 def round_attrs_df(df):

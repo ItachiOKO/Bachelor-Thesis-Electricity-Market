@@ -1,6 +1,6 @@
 from datetime import datetime
 import pandas as pd
-from config import SYSTEM_POWER, CELL_NAMES
+from config import SYSTEM_POWER, COLUMN_NAMES_CLEAN
 
 
 def get_interval_minutes(df: pd.DataFrame) -> int:

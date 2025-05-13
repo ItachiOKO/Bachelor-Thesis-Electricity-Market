@@ -4,7 +4,9 @@ from config import (
     END_DATE,
     PATH_MARKET_DATA,
     PATH_PRL_DATA,
-    CELL_NAMES,
+    PATH_SRL_DATA,
+    COLUMN_NAMES_CLEAN,
+    COLUMN_NAMES_RAW
 )
 from utils import convert_datetime_to_string
 
@@ -53,15 +55,15 @@ def create_dataframe(start_date, end_date, debug=False):
     df_master = df_master.join(df_srl_price, how='left')
 
     if debug:
-        num_null_market = df_master[CELL_NAMES['market_price']].isna().sum()
-        num_null_fcr = df_master[CELL_NAMES['prl_price']].isna().sum()
+        num_null_market = df_master[COLUMN_NAMES_CLEAN['market_price']].isna().sum()
+        num_null_fcr = df_master[COLUMN_NAMES_CLEAN['prl_price']].isna().sum()
         # Für SRL-Spalten alle SRL_* Spalten zusammenzählen
         srl_cols = [col for col in df_master.columns if col.startswith('SRL_')]
         num_null_srl = df_master[srl_cols].isna().sum().sum()
         logging.debug("Anzahl NaN-Werte nach Join: Market Price=%d, FCR Price=%d, SRL Price=%d", 
                       num_null_market, num_null_fcr, num_null_srl)
     
-    df_master.index.name = CELL_NAMES['date']
+    df_master.index.name = COLUMN_NAMES_CLEAN['date']
     df_master.fillna(0, inplace=True)
     
     if debug:
@@ -81,9 +83,9 @@ def load_market_data():
     df = pd.read_csv(
         PATH_MARKET_DATA,
         skiprows=2,
-        names=[CELL_NAMES["date"], CELL_NAMES["market_price"]],
-        parse_dates=[CELL_NAMES["date"]],
-        index_col= [CELL_NAMES["date"]]
+        names=[COLUMN_NAMES_CLEAN["date"], COLUMN_NAMES_CLEAN["market_price"]],
+        parse_dates=[COLUMN_NAMES_CLEAN["date"]],
+        index_col= [COLUMN_NAMES_CLEAN["date"]]
     )
     df.index = pd.to_datetime(df.index, utc=True).tz_convert("Europe/Berlin")
     return df
@@ -102,59 +104,59 @@ def load_prl_data() -> pd.DataFrame:
         .astype(int)    
     )
     
-    df[CELL_NAMES['date']] = (
+    df[COLUMN_NAMES_CLEAN['date']] = (
         df["DATE_FROM"].dt.floor("D")  
         + pd.to_timedelta(df["start_hour"], unit="H")
     )
 
-    df[CELL_NAMES['date']] = df[CELL_NAMES['date']].dt.tz_localize("Europe/Berlin")
-    df.set_index(CELL_NAMES['date'], inplace=True)
-    df = df[[CELL_NAMES['prl_price']]]
+    df[COLUMN_NAMES_CLEAN['date']] = df[COLUMN_NAMES_CLEAN['date']].dt.tz_localize("Europe/Berlin")
+    df.set_index(COLUMN_NAMES_CLEAN['date'], inplace=True)
+    df = df[[ COLUMN_NAMES_RAW['prl_price'] ]]        # Roh-Spalte selektieren
+    df.columns = [ COLUMN_NAMES_CLEAN['prl_price'] ]  # als Liste zuweisen
+
     return df
 
+
 def load_srl_data() -> pd.DataFrame:
-    PATH_SRL_DATA = 'data/Leistung_Ergebnisse_SRL_2023-01-01_2023-12-31.xlsx'
-    # 1. Excel einlesen
+    # 1) Excel einlesen und Datum parsen
     df = pd.read_excel(
         PATH_SRL_DATA,
         parse_dates=['DATE_FROM', 'DATE_TO'],
     )
 
-    # 2. PRODUCT in Richtung + Stunden splitten
-    df[['direction', 'start_hour', 'end_hour']] = (
-        df['PRODUCT']
-          .str.split('_', expand=True)
-    )
-    df['start_hour'] = df['start_hour'].astype(int)
+    # 2) Aus PRODUCT die Richtung (POS/NEG) und die Starthour holen
+    parts = df['PRODUCT'].str.split('_', expand=True)
+    df['direction']  = parts[0]       # 'POS' oder 'NEG'
+    df['start_hour'] = parts[1].astype(int)
 
-    # 3. Zeitindex bauen und timezone setzen
+    # 3) Timestamp bauen und als Index setzen
     df['timestamp'] = (
         df['DATE_FROM'].dt.normalize()
         + pd.to_timedelta(df['start_hour'], unit='h')
     ).dt.tz_localize('Europe/Berlin')
-    df.set_index('timestamp', inplace=True)
+    df = df.set_index('timestamp')
 
-    # 4. Pivot für alle drei Preis-Spalten gleichzeitig
-    df_wide = df.pivot_table(
-        index=df.index,
-        columns='direction',
-        values=[
-            'TOTAL_AVERAGE_CAPACITY_PRICE_[(EUR/MW)/h]',
-            'TOTAL_MIN_CAPACITY_PRICE_[(EUR/MW)/h]',
-            'TOTAL_MARGINAL_CAPACITY_PRICE_[(EUR/MW)/h]'
-        ]
+    # 4) Roh-Spalte extrahieren und über 'direction' unstacken
+    # Roh-Spalte extrahieren
+    raw_col = COLUMN_NAMES_RAW['srl_price']
+
+    # direction als zweites Index-Level hinzunehmen, dann unstacken
+    df_wide = (
+        df
+        .set_index('direction', append=True)[raw_col]
+        .unstack('direction')
     )
 
-    # 5. MultiIndex flattenen und Spalten umbenennen
+    # Spalten umbenennen
     df_wide.columns = [
-        f"SRL_{metric.split('_')[1]}_{direction}"
-        for metric, direction in df_wide.columns
+        COLUMN_NAMES_CLEAN['srl_price_pos'] if d == 'POS'
+        else COLUMN_NAMES_CLEAN['srl_price_neg']
+        for d in df_wide.columns
     ]
 
-    # 6. Achsenname entfernen
-    df_wide.columns.name = None
-
     return df_wide
+
+
 
 
 if __name__ == "__main__":

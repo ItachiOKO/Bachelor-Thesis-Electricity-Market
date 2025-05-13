@@ -49,9 +49,9 @@ def add_market_choice_constraint(model, time_points):
 
 def add_tax_constraints(model):
     s = calculate_depreciation_amount()
-    profit = model.exchange_profit + model.prl_profit
+    revenue = model.total_revenue
     # tax_base = max(0, profit - s)
-    model.c1 = pyo.Constraint(expr = model.tax_base >= profit - s)
+    model.c1 = pyo.Constraint(expr = model.tax_base >= revenue - s)
     model.c2 = pyo.Constraint(expr = model.tax_base >= 0)
 
 

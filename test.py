@@ -1,5 +1,5 @@
 import pandas as pd
-from config import CELL_NAMES
+from config import COLUMN_NAMES_CLEAN
 
 
 
