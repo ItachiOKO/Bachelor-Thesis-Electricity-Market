@@ -2,22 +2,15 @@ import logging
 logging.getLogger('pyomo').setLevel(logging.WARNING)
 
 import time
-import json
 import pandas as pd
 import pyomo.environ as pyo
 from optimisation_model import setup_model, solve_model
-from result_processing import process_results
 from pyomo_extractor import extract_pyo_results_to_df
 from result_export import export_results
 from load_marketprice_data import create_dataframe
 from utils import get_interval_minutes
 from config import (
-    BATTERY_CAPACITY,
-    BATTERY_PRICE,
     COLUMN_NAMES_CLEAN,
-    PATH_MARKET_DATA,
-    EFFICIENCY,
-    LIFETIME_CYCLES,
     RESULTS_FILE_NAME_EXCEL,
     RESULTS_FILE_NAME_PICKLE,
     SYSTEM_POWER,
