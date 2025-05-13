@@ -21,8 +21,10 @@ def add_column_calculations_to_df(df, cell_names):
 def add_attrs_calculations_to_df(df, total_profit_model, cell_names, start_date, end_date, battery_capacity, cycles, battery_price, efficiency):	
     #exchange
     n_cycles_exchange = (df[cell_names["buy_volume"]].sum() * efficiency) / battery_capacity
-    net_order_value = df[cell_names["order_cost"]].sum()
-    #prl
+    net_order_value = (
+        (df[cell_names["sell_volume"]] - df[cell_names["buy_volume"]])
+        * df[cell_names["market_price"]]
+    ).sum()    
     n_cycles_prl = (df[cell_names["prl_capacity"]].sum() * SPECIFIC_PRL_ENERGY_NEED_4H_CYCLE) / battery_capacity 
     net_prl_value = sum(df[cell_names["prl_capacity"]] * df[cell_names["prl_price"]])
     #profit calculation

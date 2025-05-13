@@ -6,7 +6,8 @@ import json
 import pandas as pd
 import pyomo.environ as pyo
 from optimisation_model import setup_model, solve_model
-from result_processing import process_results, extract_pyo_results_to_df
+from result_processing import process_results
+from pyomo_extractor import extract_pyo_results_to_df
 from result_export import export_results
 from load_marketprice_data import create_dataframe
 from utils import get_interval_minutes
@@ -61,7 +62,6 @@ def optimize_by_year(df_data):
 
 if __name__ == "__main__":
     df = create_dataframe(START_DATE, END_DATE, debug=False)
-    print(df)
 
     start_time = time.time()
     final_df_extracted, models = optimize_by_year(df)
@@ -70,7 +70,14 @@ if __name__ == "__main__":
         total_profit_model = sum(pyo.value(m.OBJ) for m in models)
     else:
         raise ValueError("Keine Modelle vorhanden")
+    
+    print(final_df_extracted)
+    export_results(final_df_extracted, RESULTS_FILE_NAME_EXCEL, RESULTS_FILE_NAME_PICKLE)
 
+
+
+
+"""
     final_df_results = process_results(
         final_df_extracted, 
         total_profit_model=total_profit_model,  # Ein Modell wird mitgegeben
@@ -85,7 +92,7 @@ if __name__ == "__main__":
     export_results(final_df_results, RESULTS_FILE_NAME_EXCEL, RESULTS_FILE_NAME_PICKLE)
     print(final_df_results)
     print(json.dumps(final_df_results.attrs, indent=4))
-
+"""
 
 
 
