@@ -20,20 +20,19 @@ from config import (
     LIFETIME_CYCLES,
     RESULTS_FILE_NAME_EXCEL,
     RESULTS_FILE_NAME_PICKLE,
-    SKIPROWS,
     SYSTEM_POWER,
     START_DATE,
     END_DATE,
 )
 
 
-def main_optimisation(df_data_month):
-    time_points = df_data_month.index.tolist()
-    market_price_dict = df_data_month[COLUMN_NAMES_CLEAN["market_price"]].to_dict()
-    prl_price_dict = df_data_month[COLUMN_NAMES_CLEAN["prl_price"]].to_dict()
-    srl_price_pos_dict = df_data_month[COLUMN_NAMES_CLEAN["srl_price_pos"]].to_dict()
-    srl_price_neg_dict = df_data_month[COLUMN_NAMES_CLEAN["srl_price_neg"]].to_dict()
-    charge_rate = SYSTEM_POWER * (get_interval_minutes(df_data_month)/60)
+def main_optimisation(df_data_period):
+    time_points = df_data_period.index.tolist()
+    market_price_dict = df_data_period[COLUMN_NAMES_CLEAN["market_price"]].to_dict()
+    prl_price_dict = df_data_period[COLUMN_NAMES_CLEAN["prl_price"]].to_dict()
+    srl_price_pos_dict = df_data_period[COLUMN_NAMES_CLEAN["srl_price_pos"]].to_dict()
+    srl_price_neg_dict = df_data_period[COLUMN_NAMES_CLEAN["srl_price_neg"]].to_dict()
+    charge_rate = SYSTEM_POWER * (get_interval_minutes(df_data_period)/60)
 
     model = setup_model(time_points, market_price_dict, prl_price_dict, srl_price_pos_dict, srl_price_neg_dict, charge_rate)
     solve_model(model)
@@ -41,22 +40,22 @@ def main_optimisation(df_data_month):
 
 
 def optimize_by_year(df_data):
-    monthly_results = []
+    yearly_results = []
     models = []  
     
-    for month, df_data_month in df_data.groupby(pd.Grouper(freq='12M')):
-        if df_data_month.empty:
-            print(f"Keine Daten für {month}")
+    for year, df_data_year in df_data.groupby(pd.Grouper(freq='12M')):
+        if df_data_year.empty:
+            print(f"Keine Daten für {year}")
             continue
         
-        print(f"Optimierung für {month.strftime('%Y-%m')}")
-        model_month = main_optimisation(df_data_month)
-        models.append(model_month)  
+        print(f"Optimierung für {year.strftime('%Y')}")
+        model_year = main_optimisation(df_data_year)
+        models.append(model_year)  
         
-        df_extracted_month = extract_pyo_results_to_df(df_data_month, model_month, COLUMN_NAMES_CLEAN)
-        monthly_results.append(df_extracted_month)
+        df_extracted_year = extract_pyo_results_to_df(df_data_year, model_year, COLUMN_NAMES_CLEAN)
+        yearly_results.append(df_extracted_year)
     
-    final_df_extracted = pd.concat(monthly_results)
+    final_df_extracted = pd.concat(yearly_results)
     return final_df_extracted, models 
 
 
@@ -73,8 +72,6 @@ if __name__ == "__main__":
     
     print(final_df_extracted)
     export_results(final_df_extracted, RESULTS_FILE_NAME_EXCEL, RESULTS_FILE_NAME_PICKLE)
-
-
 
 
 """
