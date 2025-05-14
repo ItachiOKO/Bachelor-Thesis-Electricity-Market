@@ -4,7 +4,7 @@ logging.getLogger('pyomo').setLevel(logging.WARNING)
 import time
 import pandas as pd
 import pyomo.environ as pyo
-from optimisation_model import setup_model, solve_model
+from model_builder import setup_model, solve_model
 from pyomo_extractor import extract_pyo_results_to_df
 from result_export import export_results
 from dataloader import create_dataframe
