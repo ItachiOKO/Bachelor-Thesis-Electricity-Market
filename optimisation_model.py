@@ -1,7 +1,7 @@
 import pyomo.environ as pyo
-from constraints_model import add_electricity_exchange_constraints, add_market_choice_constraint, add_tax_constraints
+from constraints_market_specific import add_electricity_exchange_constraints, add_prl_constraints, add_srl_constraints
+from constraints_marketchoice import add_market_choice_constraint
 from config import (
-    BATTERY_CAPACITY,
     EFFICIENCY,
     SPECIFIC_AGING_COST,
     SPECIFIC_PRL_ENERGY_NEED_4H_CYCLE,
@@ -9,6 +9,7 @@ from config import (
     SYSTEM_POWER
 )
 from config_cost import TAX_RATE
+from cost_calculator import calculate_depreciation_amount
 
 
 def solve_model(model):
@@ -100,6 +101,16 @@ def _define_objective(model):
 
 
 def _add_constraints(model, time_points):
-    add_electricity_exchange_constraints(model)
     add_market_choice_constraint(model, time_points)
+    add_electricity_exchange_constraints(model)
+    add_prl_constraints(model)
+    add_srl_constraints(model)
     add_tax_constraints(model)
+
+
+def add_tax_constraints(model):
+    """ tax_base = max(0, profit - s) """
+    s = calculate_depreciation_amount()
+    revenue = model.total_revenue
+    model.c1 = pyo.Constraint(expr = model.tax_base >= revenue - s)
+    model.c2 = pyo.Constraint(expr = model.tax_base >= 0)

@@ -7,7 +7,7 @@ import pyomo.environ as pyo
 from optimisation_model import setup_model, solve_model
 from pyomo_extractor import extract_pyo_results_to_df
 from result_export import export_results
-from load_marketprice_data import create_dataframe
+from dataloader import create_dataframe
 from utils import get_interval_minutes
 from config import (
     COLUMN_NAMES_CLEAN,
