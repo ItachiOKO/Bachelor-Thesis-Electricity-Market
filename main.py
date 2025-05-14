@@ -10,21 +10,21 @@ from result_export import export_results
 from dataloader import create_dataframe
 from utils import get_interval_minutes
 from config import (
-    COLUMN_NAMES_CLEAN,
     RESULTS_FILE_NAME_EXCEL,
     RESULTS_FILE_NAME_PICKLE,
     SYSTEM_POWER,
     START_DATE,
     END_DATE,
+    ColumnNamesClean as CC,
 )
 
 
 def main_optimisation(df_data_period):
     time_points = df_data_period.index.tolist()
-    market_price_dict = df_data_period[COLUMN_NAMES_CLEAN["market_price"]].to_dict()
-    prl_price_dict = df_data_period[COLUMN_NAMES_CLEAN["prl_price"]].to_dict()
-    srl_price_pos_dict = df_data_period[COLUMN_NAMES_CLEAN["srl_power_price_pos"]].to_dict()
-    srl_price_neg_dict = df_data_period[COLUMN_NAMES_CLEAN["srl_power_price_neg"]].to_dict()
+    market_price_dict = df_data_period[CC.market_price].to_dict()
+    prl_price_dict = df_data_period[CC.prl_price].to_dict()
+    srl_price_pos_dict = df_data_period[CC.srl_power_price_pos].to_dict()
+    srl_price_neg_dict = df_data_period[CC.srl_power_price_neg].to_dict()
     charge_rate = SYSTEM_POWER * (get_interval_minutes(df_data_period)/60)
 
     model = setup_model(time_points, market_price_dict, prl_price_dict, srl_price_pos_dict, srl_price_neg_dict, charge_rate)
@@ -45,7 +45,7 @@ def optimize_by_year(df_data):
         model_year = main_optimisation(df_data_year)
         models.append(model_year)  
         
-        df_extracted_year = extract_pyo_results_to_df(df_data_year, model_year, COLUMN_NAMES_CLEAN)
+        df_extracted_year = extract_pyo_results_to_df(df_data_year, model_year)
         yearly_results.append(df_extracted_year)
     
     final_df_extracted = pd.concat(yearly_results)
@@ -71,7 +71,7 @@ if __name__ == "__main__":
     final_df_results = process_results(
         final_df_extracted, 
         total_profit_model=total_profit_model,  # Ein Modell wird mitgegeben
-        cell_names=COLUMN_NAMES_CLEAN, 
+        cell_names=CC.
         start_date=START_DATE, 
         end_date=END_DATE, 
         battery_capacity=BATTERY_CAPACITY, 
