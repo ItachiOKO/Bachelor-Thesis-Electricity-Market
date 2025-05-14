@@ -14,7 +14,7 @@ from config_cost import (
 
 )
 
-from config import BATTERY_CAPACITY, SYSTEM_POWER, LIFETIME_CYCLES
+from config import BATTERY_CAPACITY, SYSTEM_POWER
 
 
 def calculate_investment_costs():

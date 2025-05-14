@@ -1,5 +1,4 @@
 import pyomo.environ as pyo
-from config import BATTERY_CAPACITY, SYSTEM_POWER
 
 
 def add_market_choice_constraint(model, time_points):

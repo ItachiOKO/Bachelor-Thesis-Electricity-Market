@@ -23,8 +23,8 @@ def main_optimisation(df_data_period):
     time_points = df_data_period.index.tolist()
     market_price_dict = df_data_period[COLUMN_NAMES_CLEAN["market_price"]].to_dict()
     prl_price_dict = df_data_period[COLUMN_NAMES_CLEAN["prl_price"]].to_dict()
-    srl_price_pos_dict = df_data_period[COLUMN_NAMES_CLEAN["srl_price_pos"]].to_dict()
-    srl_price_neg_dict = df_data_period[COLUMN_NAMES_CLEAN["srl_price_neg"]].to_dict()
+    srl_price_pos_dict = df_data_period[COLUMN_NAMES_CLEAN["srl_power_price_pos"]].to_dict()
+    srl_price_neg_dict = df_data_period[COLUMN_NAMES_CLEAN["srl_power_price_neg"]].to_dict()
     charge_rate = SYSTEM_POWER * (get_interval_minutes(df_data_period)/60)
 
     model = setup_model(time_points, market_price_dict, prl_price_dict, srl_price_pos_dict, srl_price_neg_dict, charge_rate)
