@@ -46,13 +46,14 @@ def _add_prl_mode_constraints(model):
 
 
 def _add_srl_mode_constraints(model):
+    def neg_rule(model, t):
+        iv = model.time_to_interval[t]
+        return model.srl_power_neg[t] <= model.srl_power_neg[t].ub * model.mode_srl[iv]
+    model.mode_srl_power_neg_constraint = pyo.Constraint(model.T, rule=neg_rule)
+
     def pos_rule(model, t):
         iv = model.time_to_interval[t]
         return model.srl_power_pos[t] <= model.srl_power_pos[t].ub * model.mode_srl[iv]
     model.mode_srl_power_pos_constraint = pyo.Constraint(model.T, rule=pos_rule)
 
-    def neg_rule(model, t):
-        iv = model.time_to_interval[t]
-        return model.srl_power_neg[t] <= model.srl_power_neg[t].ub * model.mode_srl[iv]
-    model.mode_srl_power_neg_constraint = pyo.Constraint(model.T, rule=neg_rule)
 

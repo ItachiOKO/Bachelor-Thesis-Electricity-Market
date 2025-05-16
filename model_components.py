@@ -12,11 +12,13 @@ from config_cost import TAX_RATE
 from cost_calculator import calculate_depreciation_amount
 
 
-def set_data(model, market_price_dict, prl_price_dict, srl_price_pos_dict, srl_price_neg_dict):
+def set_data(model, market_price_dict, prl_price_dict, srl_price_neg_dict, srl_price_pos_dict, srl_work_price_neg_dict, srl_work_price_pos_dict):
     model.market_price = pyo.Param(model.T, initialize=market_price_dict)
     model.prl_price    = pyo.Param(model.T, initialize=prl_price_dict)
-    model.srl_price_pos = pyo.Param(model.T, initialize=srl_price_pos_dict)
     model.srl_price_neg = pyo.Param(model.T, initialize=srl_price_neg_dict)
+    model.srl_price_pos = pyo.Param(model.T, initialize=srl_price_pos_dict)
+    model.srl_work_price_neg = pyo.Param(model.T, initialize=srl_work_price_neg_dict)
+    model.srl_work_price_pos = pyo.Param(model.T, initialize=srl_work_price_pos_dict)
 
 
 def define_variables(model, charge_rate):
@@ -24,8 +26,8 @@ def define_variables(model, charge_rate):
     model.sell_volume = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, charge_rate * EFFICIENCY))
     model.battery_soc = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, 1))
     model.prl_power   = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, SYSTEM_POWER))
-    model.srl_power_pos = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, SYSTEM_POWER))
     model.srl_power_neg = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, SYSTEM_POWER))
+    model.srl_power_pos = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, SYSTEM_POWER))
 
     model.tax_base  = pyo.Var(domain=pyo.NonNegativeReals)
 
@@ -34,7 +36,7 @@ def define_aging_costs(model):
     def _aging_cost_expr(model, t):
         c_exc = SPECIFIC_AGING_COST * (model.buy_volume[t] * EFFICIENCY + model.sell_volume[t] / EFFICIENCY)
         c_prl = SPECIFIC_AGING_COST * SPECIFIC_PRL_ENERGY_NEED_4H_CYCLE * model.prl_power[t]
-        c_srl = SPECIFIC_AGING_COST * (SPECIFIC_SRL_ENERGY_NEED_4H_CYCLE * (model.srl_power_pos[t] + model.srl_power_neg[t]))
+        c_srl = SPECIFIC_AGING_COST * (SPECIFIC_SRL_ENERGY_NEED_4H_CYCLE * (model.srl_power_neg[t] + model.srl_power_pos[t]))
         return c_exc + c_prl + c_srl
 
     model.aging_cost     = pyo.Expression(model.T, rule=_aging_cost_expr)
@@ -58,8 +60,9 @@ def define_profit_expressions(model):
 
     model.revenue_srl = pyo.Expression(
         expr = sum(
-            model.srl_power_pos[t] * model.srl_price_pos[t]
-          + model.srl_power_neg[t] * model.srl_price_neg[t]
+            model.srl_power_neg[t] * (model.srl_price_neg[t] + -1*model.srl_work_price_neg[t] * SPECIFIC_SRL_ENERGY_NEED_4H_CYCLE)
+          + model.srl_power_pos[t] * (model.srl_price_pos[t] + model.srl_work_price_pos[t] * SPECIFIC_SRL_ENERGY_NEED_4H_CYCLE)
+
             for t in model.T
         )
     )

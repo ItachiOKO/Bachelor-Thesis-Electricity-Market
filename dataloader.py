@@ -5,7 +5,7 @@ from config import (
     PATH_MARKET_DATA,
     PATH_PRL_DATA,
     PATH_SRL_POWER_DATA,
-    PATH_SRL_ENERGY_DATA,
+    PATH_SRL_WORK_DATA,
     ColumnNamesRaw as CR,
     ColumnNamesClean as CC,
 )
@@ -58,7 +58,7 @@ def create_dataframe(start_date, end_date, debug=False):
     # srl energy
     if debug:
         logging.info("Lade SRL Energy DataFrame")
-    df_srl_energy = load_srl_energy_dats()
+    df_srl_energy = load_srl_work_data()
     if debug:
         logging.debug("SRL Energy Index: Start=%s, Ende=%s, Länge=%d", 
                       df_srl_energy.index[0], df_srl_energy.index[-1], len(df_srl_energy.index))
@@ -165,8 +165,8 @@ def load_srl_power_data() -> pd.DataFrame:
 
 
 
-def load_srl_energy_dats():
-    df = pd.read_excel(PATH_SRL_ENERGY_DATA)
+def load_srl_work_data():
+    df = pd.read_excel(PATH_SRL_WORK_DATA)
     
     df['DELIVERY_DATE'] = pd.to_datetime(df['DELIVERY_DATE'], dayfirst=True)
     df['date_local'] = df['DELIVERY_DATE'].dt.tz_localize(
@@ -187,18 +187,18 @@ def load_srl_energy_dats():
     df_wide = df.pivot(
         index='datetime',
         columns='direction',
-        values=CR.srl_energy_price
+        values=CR.srl_work_price
     )
     
     # NEG/POS in die gewünschten Spaltennamen umbenennen
     df_wide = df_wide.rename(
         columns={
-            'NEG': CC.srl_energy_price_neg,
-            'POS': CC.srl_energy_price_pos
+            'NEG': CC.srl_work_price_neg,
+            'POS': CC.srl_work_price_pos
         }
     )
     
-    df_wide = df_wide[[CC.srl_energy_price_neg, CC.srl_energy_price_pos]]
+    df_wide = df_wide[[CC.srl_work_price_neg, CC.srl_work_price_pos]]
     
     return df_wide
 
