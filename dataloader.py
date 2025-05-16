@@ -4,7 +4,8 @@ from config import (
     END_DATE,
     PATH_MARKET_DATA,
     PATH_PRL_DATA,
-    PATH_SRL_DATA,
+    PATH_SRL_POWER_DATA,
+    PATH_SRL_ENERGY_DATA,
     ColumnNamesRaw as CR,
     ColumnNamesClean as CC,
 )
@@ -45,6 +46,7 @@ def create_dataframe(start_date, end_date, debug=False):
     df_master = df_master.join(df_prl_price, how='left')
     
     ## SRL Data
+    # srl power
     if debug:
         logging.info("Lade SRL Price DataFrame")
     df_srl_price = load_srl_power_data()
@@ -53,7 +55,17 @@ def create_dataframe(start_date, end_date, debug=False):
                       df_srl_price.index[0], df_srl_price.index[-1], len(df_srl_price.index))
         logging.debug("SRL Price Beispiel:\n%s", df_srl_price.head())
     df_master = df_master.join(df_srl_price, how='left')
+    # srl energy
+    if debug:
+        logging.info("Lade SRL Energy DataFrame")
+    df_srl_energy = load_srl_energy_dats()
+    if debug:
+        logging.debug("SRL Energy Index: Start=%s, Ende=%s, Länge=%d", 
+                      df_srl_energy.index[0], df_srl_energy.index[-1], len(df_srl_energy.index))
+        logging.debug("SRL Energy Beispiel:\n%s", df_srl_energy.head())
+    df_master = df_master.join(df_srl_energy, how='left')
 
+    ## Debugging: Überprüfen der Null-Werte
     if debug:
         num_null_market = df_master[CC.market_price].isna().sum()
         num_null_fcr = df_master[CC.prl_price].isna().sum()
@@ -121,7 +133,7 @@ def load_prl_data() -> pd.DataFrame:
 
 def load_srl_power_data() -> pd.DataFrame:
     df = pd.read_excel(
-        PATH_SRL_DATA,
+        PATH_SRL_POWER_DATA,
         parse_dates=['DATE_FROM', 'DATE_TO'],
     )
 
@@ -152,36 +164,42 @@ def load_srl_power_data() -> pd.DataFrame:
     return df_wide
 
 
-def load_srl_energy_data() -> pd.DataFrame:
-    df = pd.read_excel(
-        PATH_SRL_DATA,
-        parse_dates=['DATE_FROM', 'DATE_TO'],
+
+def load_srl_energy_dats():
+    df = pd.read_excel(PATH_SRL_ENERGY_DATA)
+    
+    df['DELIVERY_DATE'] = pd.to_datetime(df['DELIVERY_DATE'], dayfirst=True)
+    df['date_local'] = df['DELIVERY_DATE'].dt.tz_localize(
+        'Europe/Berlin',
+        ambiguous='infer',
+        nonexistent='shift_forward'
     )
-
-    parts = df['PRODUCT'].str.split('_', expand=True)
-    df['direction']  = parts[0]       # 'POS' oder 'NEG'
-    df['start_hour'] = parts[1].astype(int)
-
-    df['timestamp'] = (
-        df['DATE_FROM'].dt.normalize()
-        + pd.to_timedelta(df['start_hour'], unit='h')
-    ).dt.tz_localize('Europe/Berlin')
-    df = df.set_index('timestamp')
-
-    # direction als zweites Index-Level hinzunehmen, dann unstacken
-    df_wide = (
-        df
-        .set_index('direction', append=True)[CR.srl_power_price]
-        .unstack('direction')
+    
+    # PRODUCT zerlegen
+    df[['direction', 'step']] = df['PRODUCT'].str.split('_', expand=True)
+    df['step'] = df['step'].astype(int)
+    
+    # 15-Minuten-Offset berechnen
+    df['time_offset'] = pd.to_timedelta((df['step'] - 1) * 15, unit='minutes')
+    df['datetime'] = df['date_local'] + df['time_offset']
+    
+    # Pivot zum Wide-Format (Preis-Spalte)
+    df_wide = df.pivot(
+        index='datetime',
+        columns='direction',
+        values=CR.srl_energy_price
     )
-
-    # Spalten umbenennen
-    df_wide.columns = [
-       CC.srl_power_price_pos if d == 'POS'
-        else CC.srl_power_price_neg
-        for d in df_wide.columns
-    ]
-
+    
+    # NEG/POS in die gewünschten Spaltennamen umbenennen
+    df_wide = df_wide.rename(
+        columns={
+            'NEG': CC.srl_energy_price_neg,
+            'POS': CC.srl_energy_price_pos
+        }
+    )
+    
+    df_wide = df_wide[[CC.srl_energy_price_neg, CC.srl_energy_price_pos]]
+    
     return df_wide
 
 
