@@ -30,29 +30,29 @@ def _add_dayahead_mode_constraints(model):
     def buy_rule(model, t):
         iv = model.time_to_interval[t]
         return model.buy_volume[t] <= model.buy_volume[t].ub * model.mode_dayahead[iv]
-    model.dayahead_buy = pyo.Constraint(model.T, rule=buy_rule)
+    model.mode_dayahead_buy = pyo.Constraint(model.T, rule=buy_rule)
 
     def sell_rule(model, t):
         iv = model.time_to_interval[t]
         return model.sell_volume[t] <= model.sell_volume[t].ub * model.mode_dayahead[iv]
-    model.dayahead_sell = pyo.Constraint(model.T, rule=sell_rule)
+    model.mode_dayahead_sell = pyo.Constraint(model.T, rule=sell_rule)
 
 
 def _add_prl_mode_constraints(model):
     def prl_rule(model, t):
         iv = model.time_to_interval[t]
         return model.prl_power[t] <= model.prl_power[t].ub * model.mode_prl[iv]
-    model.prl_power_constraint = pyo.Constraint(model.T, rule=prl_rule)
+    model.mode_prl_power_constraint = pyo.Constraint(model.T, rule=prl_rule)
 
 
 def _add_srl_mode_constraints(model):
     def pos_rule(model, t):
         iv = model.time_to_interval[t]
         return model.srl_power_pos[t] <= model.srl_power_pos[t].ub * model.mode_srl[iv]
-    model.srl_power_pos_constraint = pyo.Constraint(model.T, rule=pos_rule)
+    model.mode_srl_power_pos_constraint = pyo.Constraint(model.T, rule=pos_rule)
 
     def neg_rule(model, t):
         iv = model.time_to_interval[t]
         return model.srl_power_neg[t] <= model.srl_power_neg[t].ub * model.mode_srl[iv]
-    model.srl_power_neg_constraint = pyo.Constraint(model.T, rule=neg_rule)
+    model.mode_srl_power_neg_constraint = pyo.Constraint(model.T, rule=neg_rule)
 

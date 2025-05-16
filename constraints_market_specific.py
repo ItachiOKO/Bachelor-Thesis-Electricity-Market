@@ -29,12 +29,11 @@ def add_srl_constraints(model):
         return model.srl_power_pos[t] + model.srl_power_neg[t] <= SYSTEM_POWER
     model.max_srl_power_constraint = pyo.Constraint(model.T, rule=max_srl_power_rule)
 
-    M = 0.5 / BATTERY_CAPACITY
-    def battery_soc_lower_rule(model, t):
-        return model.battery_soc[t] >= SYSTEM_POWER * (0.5/BATTERY_CAPACITY) - M * (1 - model.mode_srl[model.time_to_interval[t]])
-    model.srl_battery_soc_lower_constraint = pyo.Constraint(model.T, rule=battery_soc_lower_rule)
 
-    def battery_soc_upper_rule(model, t):
-        return model.battery_soc[t] <= 1 - (SYSTEM_POWER * (0.5/BATTERY_CAPACITY)) + M * (1 - model.mode_srl[model.time_to_interval[t]])
-    model.srl_battery_soc_upper_constraint = pyo.Constraint(model.T, rule=battery_soc_upper_rule)
+    def srl_power_pos_rule(model, t):
+        return model.srl_power_pos[t] <= BATTERY_CAPACITY * model.battery_soc[t] * model.mode_srl[model.time_to_interval[t]]
+    model.srl_power_pos_constraint = pyo.Constraint(model.T, rule=srl_power_pos_rule)
 
+    def srl_power_neg_rule(model, t):
+        return model.srl_power_neg[t] <= BATTERY_CAPACITY *(1 - model.battery_soc[t]) * model.mode_srl[model.time_to_interval[t]]
+    model.srl_power_neg_constraint = pyo.Constraint(model.T, rule=srl_power_neg_rule)
