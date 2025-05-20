@@ -2,6 +2,7 @@
 START_DATE = "2023-01-01" #included
 END_DATE = "2023-02-01" #excluded
 PATH_MARKET_DATA = "data\energy-charts_Stromproduktion_und_Börsenstrompreise_in_Deutschland_2023.csv"
+PATH_INTRADAY_DATA = "data\Energy-Charts - 2023 - Komplett.xlsx"
 PATH_PRL_DATA = "data\RESULT_OVERVIEW_CAPACITY_MARKET_FCR_2023-01-01_2023-12-31.xlsx"
 PATH_SRL_POWER_DATA = 'data/Leistung_Ergebnisse_SRL_2023-01-01_2023-12-31.xlsx'
 PATH_SRL_WORK_DATA = 'data/Arbeit_Ergebnisse_2023_SRL_2023-01-01_2023-12-31.xlsx'
@@ -28,6 +29,7 @@ RESULTS_FILE_NAME_PICKLE = f"results_{BATTERY_CAPACITY}MWH_SCR-{SYSTEM_POWER}MW_
 
 #Table Config
 class ColumnNamesRaw:
+    id_price         = 'Intraday Auktion, 15 Minuten Preis (DE-LU) (EUR / MWh)'
     prl_price        = 'GERMANY_SETTLEMENTCAPACITY_PRICE_[EUR/MW]' #€/MWh
     srl_power_price  = 'GERMANY_AVERAGE_CAPACITY_PRICE_[(EUR/MW)/h]' #€/MWh
     srl_work_price = 'GERMANY_AVERAGE_ENERGY_PRICE_[EUR/MWh]' #€/MWh
@@ -36,12 +38,14 @@ class ColumnNamesRaw:
 class ColumnNamesClean:
     date                 = 'Date'
     market_price         = 'Market Price'
+    ID_PRICE             = 'ID Price'
 
     prl_price            = 'PRL Price'
     srl_power_price_pos  = 'SRL Power Price Pos'
     srl_power_price_neg  = 'SRL Power Price Neg'
     srl_work_price_pos   = 'SRL Wokr Price Pos'
     srl_work_price_neg   = 'SRL Wokr Price Neg'
+
 
     buy_volume           = 'Buy Volume'
     sell_volume          = 'Sell Volume'

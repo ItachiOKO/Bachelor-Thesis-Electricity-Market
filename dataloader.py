@@ -6,6 +6,7 @@ from config import (
     PATH_PRL_DATA,
     PATH_SRL_POWER_DATA,
     PATH_SRL_WORK_DATA,
+    PATH_INTRADAY_DATA,
     ColumnNamesRaw as CR,
     ColumnNamesClean as CC,
 )
@@ -26,6 +27,7 @@ def create_dataframe(start_date, end_date, debug=False):
                       df_master.index[0], df_master.index[-1], len(df_master.index))
     
     ## Market Data
+    # Day-Ahead
     if debug:
         logging.info("Lade Market Price DataFrame")
     df_market_price = load_market_data()
@@ -34,6 +36,15 @@ def create_dataframe(start_date, end_date, debug=False):
                       df_market_price.index[0], df_market_price.index[-1], len(df_market_price.index))
         logging.debug("Market Price Beispiel:\n%s", df_market_price.head())
     df_master = df_master.join(df_market_price, how='left')
+    # Intraday
+    if debug:
+        logging.info("Lade Intraday Price DataFrame")
+    df_intraday_price = load_intraday_data()
+    if debug:
+        logging.debug("Intraday Price Index: Start=%s, Ende=%s, Länge=%d", 
+                      df_intraday_price.index[0], df_intraday_price.index[-1], len(df_intraday_price.index))
+        logging.debug("Intraday Price Beispiel:\n%s", df_intraday_price.head())
+    df_master = df_master.join(df_intraday_price, how='left')
     
     ## PRL Data
     if debug:
@@ -100,6 +111,25 @@ def load_market_data():
         index_col= [CC.date]
     )
     df.index = pd.to_datetime(df.index, utc=True).tz_convert("Europe/Berlin")
+    return df
+
+def load_intraday_data():
+    df = pd.read_excel(
+        PATH_INTRADAY_DATA,
+        index_col=0,
+        parse_dates=[0],
+        date_format='%d.%m.%Y, %H:%M'  
+    )
+
+    df.index = (
+        df.index
+          .tz_localize('UTC')
+          .tz_convert('Europe/Berlin')
+    )
+    df: pd.DataFrame = df[[CR.id_price]].rename(
+        columns={CR.id_price: CC.ID_PRICE}
+)
+
     return df
 
 
