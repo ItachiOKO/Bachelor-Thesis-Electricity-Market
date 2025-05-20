@@ -78,15 +78,15 @@ def create_dataframe(start_date, end_date, debug=False):
 
     ## Debugging: Überprüfen der Null-Werte
     if debug:
-        num_null_market = df_master[CC.market_price].isna().sum()
-        num_null_fcr = df_master[CC.prl_price].isna().sum()
+        num_null_market = df_master[CC.DA_PRICE].isna().sum()
+        num_null_fcr = df_master[CC.PRL_PRICE].isna().sum()
         # Für SRL-Spalten alle SRL_* Spalten zusammenzählen
         srl_cols = [col for col in df_master.columns if col.startswith('SRL_')]
         num_null_srl = df_master[srl_cols].isna().sum().sum()
         logging.debug("Anzahl NaN-Werte nach Join: Market Price=%d, FCR Price=%d, SRL Price=%d", 
                       num_null_market, num_null_fcr, num_null_srl)
     
-    df_master.index.name = CC.date
+    df_master.index.name = CC.DATE
     df_master.fillna(0, inplace=True)
     
     if debug:
@@ -106,9 +106,9 @@ def load_market_data():
     df = pd.read_csv(
         PATH_MARKET_DATA,
         skiprows=2,
-        names=[CC.date, CC.market_price],
-        parse_dates=[CC.date],
-        index_col= [CC.date]
+        names=[CC.DATE, CC.DA_PRICE],
+        parse_dates=[CC.DATE],
+        index_col= [CC.DATE]
     )
     df.index = pd.to_datetime(df.index, utc=True).tz_convert("Europe/Berlin")
     return df
@@ -126,8 +126,8 @@ def load_intraday_data():
           .tz_localize('UTC')
           .tz_convert('Europe/Berlin')
     )
-    df: pd.DataFrame = df[[CR.id_price]].rename(
-        columns={CR.id_price: CC.ID_PRICE}
+    df: pd.DataFrame = df[[CR.ID_PRICE]].rename(
+        columns={CR.ID_PRICE: CC.ID_PRICE}
 )
 
     return df
@@ -146,17 +146,17 @@ def load_prl_data() -> pd.DataFrame:
         .astype(int)    
     )
     
-    df[CC.date] = (
+    df[CC.DATE] = (
         df["DATE_FROM"].dt.floor("D")  
         + pd.to_timedelta(df["start_hour"], unit="H")
     )
 
-    df[CC.date] = df[CC.date].dt.tz_localize("Europe/Berlin")
-    df.set_index(CC.date, inplace=True)
+    df[CC.DATE] = df[CC.DATE].dt.tz_localize("Europe/Berlin")
+    df.set_index(CC.DATE, inplace=True)
 
-    df = df[[CR.prl_price]]    # <-- echtes DataFrame, kein Python-List-Literal
+    df = df[[CR.PRL_PRICE]]    # <-- echtes DataFrame, kein Python-List-Literal
     # optional: gleich umbenennen
-    df.columns = [ CC.prl_price ]
+    df.columns = [ CC.PRL_PRICE ]
 
     return df
 
@@ -180,14 +180,14 @@ def load_srl_power_data() -> pd.DataFrame:
     # direction als zweites Index-Level hinzunehmen, dann unstacken
     df_wide = (
         df
-        .set_index('direction', append=True)[CR.srl_power_price]
+        .set_index('direction', append=True)[CR.SRL_POWER_PRICE]
         .unstack('direction')
     )
 
     # Spalten umbenennen
     df_wide.columns = [
-       CC.srl_power_price_pos if d == 'POS'
-        else CC.srl_power_price_neg
+       CC.SRL_POWER_PRICE_POS if d == 'POS'
+        else CC.SRL_POWER_PRICE_NEG
         for d in df_wide.columns
     ]
 
@@ -217,18 +217,18 @@ def load_srl_work_data():
     df_wide = df.pivot(
         index='datetime',
         columns='direction',
-        values=CR.srl_work_price
+        values=CR.SRL_WORK_PRICE
     )
     
     # NEG/POS in die gewünschten Spaltennamen umbenennen
     df_wide = df_wide.rename(
         columns={
-            'NEG': CC.srl_work_price_neg,
-            'POS': CC.srl_work_price_pos
+            'NEG': CC.SRL_WORK_PRICE_NEG,
+            'POS': CC.SRL_WORK_PRICE_POS
         }
     )
     
-    df_wide = df_wide[[CC.srl_work_price_neg, CC.srl_work_price_pos]]
+    df_wide = df_wide[[CC.SRL_WORK_PRICE_NEG, CC.SRL_WORK_PRICE_POS]]
     
     return df_wide
 

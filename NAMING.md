@@ -1,25 +1,53 @@
-## Marktarten
+1. Allgemeine Konventionen
 
-| Kürzel | Bedeutung            |
-|--------|----------------------|
-| `ID`   | Intraday             |
-| `DA`   | Day-Ahead            |
-| `AUC`  | Auktion              |
-| `CONT` | Kontinuierlicher Handel |
+snake_case für alle nicht-konstanten Python-Variablen und Funktionen
 
-## Regelleistung
+UPPER_SNAKE_CASE für Konstanten und Config-Entries (z. B. in config.py)
+
+PascalCase (CapWords) für Klassennamen
+
+
+2. Pyomo-Modellkomponenten
+
+v_ + UPPER_SNAKE_CASE > Entscheidungsvariablen
+
+p_ + UPPER_SNAKE_CASE -> Parameter 
+
+c_ + UPPER_SNAKE_CASE -> Constraints
+
+e_ + UPPER_SNAKE_CASE -> Expressions 
+
+
+3. Marktarten
 
 | Kürzel | Bedeutung               |
-|--------|-------------------------|
-| `PRL`  | Primärregelleistung     |
-| `SRL`  | Sekundärregelleistung   |
+| ------ | ----------------------- |
+| ID     | Intraday                |
+| DA     | Day-Ahead               |
+| AUC    | Auktion                 |
+| CONT   | Kontinuierlicher Handel |
 
-## Handelsgrößen
 
-| Kürzel     | Bedeutung        |
-|------------|------------------|
-| `BUY_VOL`  | Kaufvolumen      |
-| `SELL_VOL` | Verkaufsvolumen  |
-| `PRICE`    | Arbeitspreis     |
+4. Regelleistung
 
+| Kürzel | Bedeutung             |
+| ------ | --------------------- |
+| PRL    | Primärregelleistung   |
+| SRL    | Sekundärregelleistung |
+
+
+5. Handelsgrößen
+
+
+| Kürzel    | Bedeutung       |
+| --------- | --------------- |
+| BUY_VOL  | Kaufvolumen     |
+| SELL_VOL | Verkaufsvolumen |
+
+6. Weiteres
+
+| Kürzel    | Bedeutung       |
+| --------- | --------------- |
+| BAT       | Battery         |
+|  |  |
 

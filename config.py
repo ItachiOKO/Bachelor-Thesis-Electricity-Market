@@ -29,31 +29,31 @@ RESULTS_FILE_NAME_PICKLE = f"results_{BATTERY_CAPACITY}MWH_SCR-{SYSTEM_POWER}MW_
 
 #Table Config
 class ColumnNamesRaw:
-    id_price         = 'Intraday Auktion, 15 Minuten Preis (DE-LU) (EUR / MWh)'
-    prl_price        = 'GERMANY_SETTLEMENTCAPACITY_PRICE_[EUR/MW]' #€/MWh
-    srl_power_price  = 'GERMANY_AVERAGE_CAPACITY_PRICE_[(EUR/MW)/h]' #€/MWh
-    srl_work_price = 'GERMANY_AVERAGE_ENERGY_PRICE_[EUR/MWh]' #€/MWh
+    ID_PRICE         = 'Intraday Auktion, 15 Minuten Preis (DE-LU) (EUR / MWh)'
+    PRL_PRICE        = 'GERMANY_SETTLEMENTCAPACITY_PRICE_[EUR/MW]' #€/MWh
+    SRL_POWER_PRICE  = 'GERMANY_AVERAGE_CAPACITY_PRICE_[(EUR/MW)/h]' #€/MWh
+    SRL_WORK_PRICE = 'GERMANY_AVERAGE_ENERGY_PRICE_[EUR/MWh]' #€/MWh
 
 
 class ColumnNamesClean:
-    date                 = 'Date'
-    market_price         = 'Market Price'
-    ID_PRICE             = 'ID Price'
+    DATE                 = 'Date'
+    DA_PRICE             = 'Day-Ahead Price'
+    ID_PRICE             = 'Intra-Day Price'
 
-    prl_price            = 'PRL Price'
-    srl_power_price_pos  = 'SRL Power Price Pos'
-    srl_power_price_neg  = 'SRL Power Price Neg'
-    srl_work_price_pos   = 'SRL Wokr Price Pos'
-    srl_work_price_neg   = 'SRL Wokr Price Neg'
+    PRL_PRICE            = 'PRL Price'
+    SRL_POWER_PRICE_POS  = 'SRL Power Price Pos'
+    SRL_POWER_PRICE_NEG  = 'SRL Power Price Neg'
+    SRL_WORK_PRICE_POS   = 'SRL Wokr Price Pos'
+    SRL_WORK_PRICE_NEG   = 'SRL Wokr Price Neg'
 
 
-    buy_volume           = 'Buy Volume'
-    sell_volume          = 'Sell Volume'
-    battery_soc          = 'Battery SOC'
-    prl_capacity         = 'PRL Power'
-    srl_power_pos        = 'SRL Power Pos'
-    srl_power_neg        = 'SRL Power Neg'
-    aging_cost           = 'Aging Cost'
+    BUY_VOL           = 'Buy Volume'
+    SELL_VOL          = 'Sell Volume'
+    BAT_SOC          = 'Battery SOC'
+    PRL_POWER         = 'PRL Power'
+    SRL_POWER_POS        = 'SRL Power Pos'
+    SRL_POWER_NEG        = 'SRL Power Neg'
+    AGING_COST           = 'Aging Cost'
     
-    profit_calc          = 'Profit'
-    order_cost           = 'Net order value'
+    PROFIT_CALC          = 'Profit'
+    ORDER_COST           = 'Net order value'
