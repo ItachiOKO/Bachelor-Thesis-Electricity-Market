@@ -30,7 +30,7 @@ def create_dataframe(start_date, end_date, debug=False):
     # Day-Ahead
     if debug:
         logging.info("Lade Market Price DataFrame")
-    df_market_price = load_market_data()
+    df_market_price = load_da_auc_price_data()
     if debug:
         logging.debug("Market Price Index: Start=%s, Ende=%s, Länge=%d", 
                       df_market_price.index[0], df_market_price.index[-1], len(df_market_price.index))
@@ -102,7 +102,7 @@ def create_master_df(start_date, end_date):
     df = pd.DataFrame(index=master_index)
     return df
 
-def load_market_data():
+def load_da_auc_price_data():
     df = pd.read_csv(
         PATH_MARKET_DATA,
         skiprows=2,

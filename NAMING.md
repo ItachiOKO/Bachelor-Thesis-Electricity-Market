@@ -4,7 +4,7 @@ snake_case für alle nicht-konstanten Python-Variablen und Funktionen
 
 UPPER_SNAKE_CASE für Konstanten und Config-Entries (z. B. in config.py)
 
-PascalCase (CapWords) für Klassennamen
+PascalCase für Klassennamen
 
 
 2. Pyomo-Modellkomponenten
@@ -25,7 +25,7 @@ e_ + UPPER_SNAKE_CASE -> Expressions
 | ID     | Intraday                |
 | DA     | Day-Ahead               |
 | AUC    | Auktion                 |
-| CONT   | Kontinuierlicher Handel |
+| CONT   | Kontinuierlich          |
 
 
 4. Regelleistung

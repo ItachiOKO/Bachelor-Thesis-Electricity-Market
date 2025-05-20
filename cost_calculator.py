@@ -14,11 +14,11 @@ from config_cost import (
 
 )
 
-from config import BATTERY_CAPACITY, SYSTEM_POWER
+from config import BAT_CAPACITY, SYSTEM_POWER
 
 
 def calculate_investment_costs():
-    battery_cost = SPECIFIC_BATTERY_INVEST * BATTERY_CAPACITY
+    battery_cost = SPECIFIC_BATTERY_INVEST * BAT_CAPACITY
     inverter_cost = SPECIFIC_INVERTER_INVEST * SYSTEM_POWER 
     transformer_cost = SPECIFIC_TRANSFORMER_INVEST * SYSTEM_POWER
     construction_allowance = SPECIFIC_CONSTRUCTION_ALLOWANCE_INVEST * SYSTEM_POWER
