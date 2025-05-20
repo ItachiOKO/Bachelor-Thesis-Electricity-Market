@@ -47,10 +47,10 @@ class ColumnNamesClean:
     SRL_WORK_PRICE_NEG   = 'SRL Wokr Price Neg'
 
 
-    BUY_VOL           = 'Buy Volume'
-    SELL_VOL          = 'Sell Volume'
-    BAT_SOC          = 'Battery SOC'
-    PRL_POWER         = 'PRL Power'
+    DA_AUC_BUY_VOL       = 'Buy Volume Day-Ahead Auc'
+    DA_AUC_SELL_VOL      = 'Sell Volume Day-Ahead Auc'
+    BAT_SOC              = 'Battery SOC'
+    PRL_POWER            = 'PRL Power'
     SRL_POWER_POS        = 'SRL Power Pos'
     SRL_POWER_NEG        = 'SRL Power Neg'
     AGING_COST           = 'Aging Cost'
