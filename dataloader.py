@@ -19,61 +19,41 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 def create_dataframe(start_date, end_date, debug=False):
-    if debug:
-        logging.info("Erstelle Master-DataFrame von %s bis %s", start_date, end_date)
+    if debug: logging.info("Erstelle Master-DataFrame von %s bis %s", start_date, end_date)
     df_master = create_master_df(start_date, end_date)
-    if debug:
-        logging.debug("Master-Index: Start=%s, Ende=%s, Länge=%d", 
-                      df_master.index[0], df_master.index[-1], len(df_master.index))
-    
+    if debug: logging.debug("Master-Index: Start=%s, Ende=%s, Länge=%d", df_master.index[0], df_master.index[-1], len(df_master.index))
     ## Market Data
     # Day-Ahead
-    if debug:
-        logging.info("Lade Market Price DataFrame")
+    if debug: logging.info("Lade Market Price DataFrame")
     df_market_price = load_da_auc_price_data()
-    if debug:
-        logging.debug("Market Price Index: Start=%s, Ende=%s, Länge=%d", 
-                      df_market_price.index[0], df_market_price.index[-1], len(df_market_price.index))
-        logging.debug("Market Price Beispiel:\n%s", df_market_price.head())
+
+    if debug: logging.debug("Market Price Index: Start=%s, Ende=%s, Länge=%d", df_market_price.index[0], df_market_price.index[-1], len(df_market_price.index)) 
     df_master = df_master.join(df_market_price, how='left')
+
     # Intraday
-    if debug:
-        logging.info("Lade Intraday Price DataFrame")
-    df_intraday_price = load_intraday_data()
-    if debug:
-        logging.debug("Intraday Price Index: Start=%s, Ende=%s, Länge=%d", 
-                      df_intraday_price.index[0], df_intraday_price.index[-1], len(df_intraday_price.index))
-        logging.debug("Intraday Price Beispiel:\n%s", df_intraday_price.head())
+    if debug: logging.info("Lade Intraday Price DataFrame")
+    df_intraday_price = load_id_data()
+
+    if debug: logging.debug("Intraday Price Index: Start=%s, Ende=%s, Länge=%d", df_intraday_price.index[0], df_intraday_price.index[-1], len(df_intraday_price.index))
     df_master = df_master.join(df_intraday_price, how='left')
     
     ## PRL Data
-    if debug:
-        logging.info("Lade FCR Price DataFrame")
+    if debug: logging.info("Lade FCR Price DataFrame")
     df_prl_price = load_prl_data()
-    if debug:
-        logging.debug("FCR Price Index: Start=%s, Ende=%s, Länge=%d", 
-                      df_prl_price.index[0], df_prl_price.index[-1], len(df_prl_price.index))
-        logging.debug("FCR Price Beispiel:\n%s", df_prl_price.head())
+
+    if debug: logging.debug("FCR Price Index: Start=%s, Ende=%s, Länge=%d", df_prl_price.index[0], df_prl_price.index[-1], len(df_prl_price.index))
     df_master = df_master.join(df_prl_price, how='left')
     
     ## SRL Data
     # srl power
-    if debug:
-        logging.info("Lade SRL Price DataFrame")
+    if debug: logging.info("Lade SRL Price DataFrame")
     df_srl_price = load_srl_power_data()
-    if debug:
-        logging.debug("SRL Price Index: Start=%s, Ende=%s, Länge=%d", 
-                      df_srl_price.index[0], df_srl_price.index[-1], len(df_srl_price.index))
-        logging.debug("SRL Price Beispiel:\n%s", df_srl_price.head())
+    if debug: logging.debug("SRL Price Index: Start=%s, Ende=%s, Länge=%d", df_srl_price.index[0], df_srl_price.index[-1], len(df_srl_price.index)) 
     df_master = df_master.join(df_srl_price, how='left')
     # srl energy
-    if debug:
-        logging.info("Lade SRL Energy DataFrame")
+    if debug: logging.info("Lade SRL Energy DataFrame")
     df_srl_energy = load_srl_work_data()
-    if debug:
-        logging.debug("SRL Energy Index: Start=%s, Ende=%s, Länge=%d", 
-                      df_srl_energy.index[0], df_srl_energy.index[-1], len(df_srl_energy.index))
-        logging.debug("SRL Energy Beispiel:\n%s", df_srl_energy.head())
+    if debug: logging.debug("SRL Energy Index: Start=%s, Ende=%s, Länge=%d", df_srl_energy.index[0], df_srl_energy.index[-1], len(df_srl_energy.index))
     df_master = df_master.join(df_srl_energy, how='left')
 
     ## Debugging: Überprüfen der Null-Werte
@@ -113,12 +93,14 @@ def load_da_auc_price_data():
     df.index = pd.to_datetime(df.index, utc=True).tz_convert("Europe/Berlin")
     return df
 
-def load_intraday_data():
+def load_id_data():
     df = pd.read_excel(
         PATH_INTRADAY_DATA,
-        index_col=0,
-        parse_dates=[0],
-        date_format='%d.%m.%Y, %H:%M'  
+        usecols=['Datum und Uhrzeit (UTC)', CR.ID_PRICE],        # Spalte 0 = Datum, plus die Preis-Spalte
+        index_col=0,                     # setze die Datums-Spalte als Index
+        parse_dates=[0],                 # parse die Index-Spalte als Datetime
+        date_format='%d.%m.%Y, %H:%M',  
+        engine='openpyxl'
     )
 
     df.index = (
@@ -132,13 +114,15 @@ def load_intraday_data():
 
     return df
 
-
+    
 def load_prl_data() -> pd.DataFrame:
     df = pd.read_excel(
         PATH_PRL_DATA,
-        parse_dates=["DATE_FROM", "DATE_TO"],
+        usecols=["DATE_FROM", "PRODUCTNAME", CR.PRL_PRICE],
+        parse_dates=["DATE_FROM"],
+        engine="openpyxl",           # falls du vorher kein engine explizit hattest
     )
-    
+
     df["start_hour"] = (
         df["PRODUCTNAME"]
         .str.split("_")
@@ -164,8 +148,11 @@ def load_prl_data() -> pd.DataFrame:
 def load_srl_power_data() -> pd.DataFrame:
     df = pd.read_excel(
         PATH_SRL_POWER_DATA,
+        usecols=['DATE_FROM', 'DATE_TO', 'PRODUCT', CR.SRL_POWER_PRICE],
         parse_dates=['DATE_FROM', 'DATE_TO'],
+        engine='openpyxl',
     )
+
 
     parts = df['PRODUCT'].str.split('_', expand=True)
     df['direction']  = parts[0]       # 'POS' oder 'NEG'
@@ -196,7 +183,10 @@ def load_srl_power_data() -> pd.DataFrame:
 
 
 def load_srl_work_data():
-    df = pd.read_excel(PATH_SRL_WORK_DATA)
+    df = pd.read_excel(
+        PATH_SRL_WORK_DATA,
+        usecols=['DELIVERY_DATE', 'PRODUCT', CR.SRL_WORK_PRICE],
+        )
     
     df['DELIVERY_DATE'] = pd.to_datetime(df['DELIVERY_DATE'], dayfirst=True)
     df['date_local'] = df['DELIVERY_DATE'].dt.tz_localize(
@@ -234,7 +224,11 @@ def load_srl_work_data():
 
 
 if __name__ == "__main__":
+    # mesure time
+    import time
+    start_time = time.time()
     df = create_dataframe(START_DATE, END_DATE, debug=False)
+    print(f"Berechnungszeit: {round(time.time() - start_time, 1)} Sekunden")
     print(df)
     # to excel
 
