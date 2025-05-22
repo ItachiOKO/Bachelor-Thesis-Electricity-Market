@@ -15,11 +15,11 @@ def solve_model(model):
     return solver.solve(model, tee=False)
 
 
-def setup_model(time_points, market_price_dict, prl_price_dict, srl_power_price_neg_dict, srl_power_price_pos_dict, srl_work_price_neg_dict, srl_work_price_pos_dict, charge_rate):	
+def setup_model(time_points, da_auc_price_dict, id_price_dict, prl_price_dict, srl_power_price_neg_dict, srl_power_price_pos_dict, srl_work_price_neg_dict, srl_work_price_pos_dict, charge_rate):	
     model = pyo.ConcreteModel()
     model.T = pyo.Set(initialize=time_points, ordered=True)
 
-    set_data(model, market_price_dict, prl_price_dict, srl_power_price_neg_dict, srl_power_price_pos_dict, srl_work_price_neg_dict, srl_work_price_pos_dict)
+    set_data(model, da_auc_price_dict, id_price_dict, prl_price_dict, srl_power_price_neg_dict, srl_power_price_pos_dict, srl_work_price_neg_dict, srl_work_price_pos_dict)
     define_variables(model, charge_rate)
     define_aging_costs(model)
     define_profit_expressions(model)

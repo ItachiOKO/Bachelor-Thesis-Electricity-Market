@@ -1,7 +1,7 @@
 #Data Config
 START_DATE = "2023-01-01" #included
-END_DATE = "2023-02-01" #excluded
-PATH_MARKET_DATA = "data\energy-charts_Stromproduktion_und_Börsenstrompreise_in_Deutschland_2023.csv"
+END_DATE = "2023-01-02" #excluded
+PATH_DA_AUC_DATA = "data\energy-charts_Stromproduktion_und_Börsenstrompreise_in_Deutschland_2023.csv"
 PATH_INTRADAY_DATA = "data\Energy-Charts - 2023 - Komplett.xlsx"
 PATH_PRL_DATA = "data\RESULT_OVERVIEW_CAPACITY_MARKET_FCR_2023-01-01_2023-12-31.xlsx"
 PATH_SRL_POWER_DATA = 'data/Leistung_Ergebnisse_SRL_2023-01-01_2023-12-31.xlsx'
@@ -49,6 +49,8 @@ class ColumnNamesClean:
 
     DA_AUC_BUY_VOL       = 'Buy Volume Day-Ahead Auc'
     DA_AUC_SELL_VOL      = 'Sell Volume Day-Ahead Auc'
+    ID_BUY_VOL           = 'Buy Volume Intraday'
+    ID_SELL_VOL          = 'Sell Volume Intraday'
     BAT_SOC              = 'Battery SOC'
     PRL_POWER            = 'PRL Power'
     SRL_POWER_POS        = 'SRL Power Pos'

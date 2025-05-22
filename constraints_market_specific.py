@@ -5,11 +5,13 @@ from config import BAT_CAPACITY, EFFICIENCY, SYSTEM_POWER
 def add_electricity_exchange_constraints(model):
 
     def cumulative_soc_rule(model, t):
+        buy_vol = model.v_DA_AUC_BUY_VOL[t] + model.v_ID_BUY_VOL[t]
+        sell_vol = model.v_DA_AUC_SELL_VOL[t] + model.v_ID_SELL_VOL[t]
         if t == min(model.T):
-            return model.v_BAT_SOC[t] == (model.v_DA_AUC_BUY_VOL[t]*EFFICIENCY - model.v_DA_AUC_SELL_VOL[t]/EFFICIENCY) / BAT_CAPACITY
+            return model.v_BAT_SOC[t] == (buy_vol*EFFICIENCY - sell_vol/EFFICIENCY) / BAT_CAPACITY
         else:
             prev_t = model.T.prev(t)  
-            return model.v_BAT_SOC[t] == model.v_BAT_SOC[prev_t] + (model.v_DA_AUC_BUY_VOL[t]*EFFICIENCY - model.v_DA_AUC_SELL_VOL[t]/EFFICIENCY) / BAT_CAPACITY
+            return model.v_BAT_SOC[t] == model.v_BAT_SOC[prev_t] + (buy_vol*EFFICIENCY - sell_vol/EFFICIENCY) / BAT_CAPACITY
     model.c_CUMULATIVE_SOC = pyo.Constraint(model.T, rule=cumulative_soc_rule)
 
 

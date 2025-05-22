@@ -4,38 +4,49 @@ import pyomo.environ as pyo
 def add_market_choice_constraint(model, time_points):
     unique_intervals = sorted({(t.date(), t.hour // 4) for t in time_points})
     model.D4 = pyo.Set(initialize=unique_intervals, ordered=True)
-
-    model.v_MODE_DA_AUC = pyo.Var(model.D4, domain=pyo.Binary)
-    model.v_MODE_PRL      = pyo.Var(model.D4, domain=pyo.Binary)
-    model.v_MODE_SRL      = pyo.Var(model.D4, domain=pyo.Binary)
-
-    def one_mode_per_interval_rule(model, date, interval):
-        return (
-          model.v_MODE_DA_AUC[date, interval]
-        + model.v_MODE_PRL[date, interval]
-        + model.v_MODE_SRL[date, interval]
-        == 1
-        )
-    model.c_ONE_MODE_ONLY = pyo.Constraint(model.D4, rule=one_mode_per_interval_rule)
-
-
     model.time_to_interval = {t: (t.date(), t.hour // 4) for t in time_points}
 
+
+    model.v_MODE_DA_AUC = pyo.Var(model.T, domain=pyo.Binary) #alle 15 Minuten
+    model.v_MODE_ID = pyo.Var(model.T, domain=pyo.Binary) #alle 15 Minuten
+    model.v_MODE_PRL      = pyo.Var(model.D4, domain=pyo.Binary) # alle 4 Stunden
+    model.v_MODE_SRL      = pyo.Var(model.D4, domain=pyo.Binary) # alle 4 Stunden
+
+    def one_mode_per_t_rule(model, t):
+        iv = model.time_to_interval[t]
+        return (
+            model.v_MODE_DA_AUC[t]
+          + model.v_MODE_ID[t]
+          + model.v_MODE_PRL[iv]
+          + model.v_MODE_SRL[iv]
+        ) == 1
+    model.c_ONE_MODE_ONLY = pyo.Constraint(model.T, rule=one_mode_per_t_rule)
+
+
+
     _add_dayahead_mode_constraints(model)
+    _add_id_mode_constraints(model)
     _add_prl_mode_constraints(model)
     _add_srl_mode_constraints(model)
 
 
 def _add_dayahead_mode_constraints(model):
     def buy_rule(model, t):
-        iv = model.time_to_interval[t]
-        return model.v_DA_AUC_BUY_VOL[t] <= model.v_DA_AUC_BUY_VOL[t].ub * model.v_MODE_DA_AUC[iv]
+        return model.v_DA_AUC_BUY_VOL[t] <= model.v_DA_AUC_BUY_VOL[t].ub * model.v_MODE_DA_AUC[t]
     model.c_MODE_DA_BUY = pyo.Constraint(model.T, rule=buy_rule)
 
     def sell_rule(model, t):
-        iv = model.time_to_interval[t]
-        return model.v_DA_AUC_SELL_VOL[t] <= model.v_DA_AUC_SELL_VOL[t].ub * model.v_MODE_DA_AUC[iv]
+        return model.v_DA_AUC_SELL_VOL[t] <= model.v_DA_AUC_SELL_VOL[t].ub * model.v_MODE_DA_AUC[t]
     model.c_MODE_DA_SELL = pyo.Constraint(model.T, rule=sell_rule)
+
+def _add_id_mode_constraints(model):
+    def buy_rule(model, t):
+        return model.v_ID_BUY_VOL[t] <= model.v_ID_BUY_VOL[t].ub * model.v_MODE_ID[t]
+    model.c_MODE_ID_BUY = pyo.Constraint(model.T, rule=buy_rule)
+
+    def sell_rule(model, t):
+        return model.v_ID_SELL_VOL[t] <= model.v_ID_SELL_VOL[t].ub * model.v_MODE_ID[t]
+    model.c_MODE_ID_SELL = pyo.Constraint(model.T, rule=sell_rule)
 
 
 def _add_prl_mode_constraints(model):
