@@ -7,7 +7,7 @@ import pyomo.environ as pyo
 from model_builder import setup_model, solve_model
 from pyomo_extractor import extract_pyo_results_to_df
 from result_export import export_results
-from dataloader import create_dataframe
+from data_pipline import create_dataframe
 from utils import get_interval_minutes
 from config import (
     RESULTS_FILE_NAME_EXCEL,
@@ -40,12 +40,12 @@ def optimize_by_year(df_data):
     yearly_results = []
     models = []  
     
-    for year, df_data_year in df_data.groupby(pd.Grouper(freq='12M')):
+    for year, df_data_year in df_data.groupby(pd.Grouper(freq='Y')):
         if df_data_year.empty:
             print(f"Keine Daten für {year}")
             continue
         
-        print(f"Optimierung für {year.strftime('%Y')}")
+        print(f"Optimierung {df_data_year.index[0]} bis {df_data_year.index[-1]}")
         model_year = main_optimisation(df_data_year)
         models.append(model_year)  
         
@@ -58,7 +58,7 @@ def optimize_by_year(df_data):
 
 if __name__ == "__main__":
     df = create_dataframe(START_DATE, END_DATE, debug=False)
-    print("df erstellt")
+    print(df)
     start_time = time.time()
     final_df_extracted, models = optimize_by_year(df)
     print(f"Berechnungszeit: {round(time.time() - start_time, 1)} Sekunden")
