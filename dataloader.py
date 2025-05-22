@@ -1,8 +1,10 @@
+import os
+import locale
 import pandas as pd
 from config import (
     START_DATE,
     END_DATE,
-    PATH_MARKET_DATA,
+    PATH_DA_AUC_DATA,
     PATH_PRL_DATA,
     PATH_SRL_POWER_DATA,
     PATH_SRL_WORK_DATA,
@@ -10,97 +12,75 @@ from config import (
     ColumnNamesRaw as CR,
     ColumnNamesClean as CC,
 )
-from utils import convert_datetime_to_string
+from utils import convert_datetime_to_string, get_pickle_path
 
 import logging
 
-# Konfiguration des Loggings – falls noch nicht geschehen
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s')
+locale.setlocale(locale.LC_NUMERIC, 'de_DE.UTF-8')
+
 
 def create_dataframe(start_date, end_date, debug=False):
-    if debug: logging.info("Erstelle Master-DataFrame von %s bis %s", start_date, end_date)
     df_master = create_master_df(start_date, end_date)
-    if debug: logging.debug("Master-Index: Start=%s, Ende=%s, Länge=%d", df_master.index[0], df_master.index[-1], len(df_master.index))
-    ## Market Data
-    # Day-Ahead
-    if debug: logging.info("Lade Market Price DataFrame")
-    df_market_price = load_da_auc_price_data()
-
-    if debug: logging.debug("Market Price Index: Start=%s, Ende=%s, Länge=%d", df_market_price.index[0], df_market_price.index[-1], len(df_market_price.index)) 
-    df_master = df_master.join(df_market_price, how='left')
-
-    # Intraday
-    if debug: logging.info("Lade Intraday Price DataFrame")
-    df_intraday_price = load_id_data()
-
-    if debug: logging.debug("Intraday Price Index: Start=%s, Ende=%s, Länge=%d", df_intraday_price.index[0], df_intraday_price.index[-1], len(df_intraday_price.index))
-    df_master = df_master.join(df_intraday_price, how='left')
-    
-    ## PRL Data
-    if debug: logging.info("Lade FCR Price DataFrame")
-    df_prl_price = load_prl_data()
-
-    if debug: logging.debug("FCR Price Index: Start=%s, Ende=%s, Länge=%d", df_prl_price.index[0], df_prl_price.index[-1], len(df_prl_price.index))
-    df_master = df_master.join(df_prl_price, how='left')
-    
-    ## SRL Data
-    # srl power
-    if debug: logging.info("Lade SRL Price DataFrame")
-    df_srl_price = load_srl_power_data()
-    if debug: logging.debug("SRL Price Index: Start=%s, Ende=%s, Länge=%d", df_srl_price.index[0], df_srl_price.index[-1], len(df_srl_price.index)) 
-    df_master = df_master.join(df_srl_price, how='left')
-    # srl energy
-    if debug: logging.info("Lade SRL Energy DataFrame")
-    df_srl_energy = load_srl_work_data()
-    if debug: logging.debug("SRL Energy Index: Start=%s, Ende=%s, Länge=%d", df_srl_energy.index[0], df_srl_energy.index[-1], len(df_srl_energy.index))
-    df_master = df_master.join(df_srl_energy, how='left')
-
-    ## Debugging: Überprüfen der Null-Werte
+    dfs = [
+        load_da_auc_price_data(PATH_DA_AUC_DATA),     # Day-Ahead
+        load_id_data(PATH_INTRADAY_DATA),               # Intraday
+        load_prl_data(PATH_PRL_DATA),              # PRL
+        load_srl_power_data(PATH_SRL_POWER_DATA),        # SRL Power
+        load_srl_work_data(PATH_SRL_WORK_DATA),         # SRL Energy
+    ]
     if debug:
-        num_null_market = df_master[CC.DA_PRICE].isna().sum()
-        num_null_fcr = df_master[CC.PRL_PRICE].isna().sum()
-        # Für SRL-Spalten alle SRL_* Spalten zusammenzählen
-        srl_cols = [col for col in df_master.columns if col.startswith('SRL_')]
-        num_null_srl = df_master[srl_cols].isna().sum().sum()
-        logging.debug("Anzahl NaN-Werte nach Join: Market Price=%d, FCR Price=%d, SRL Price=%d", 
-                      num_null_market, num_null_fcr, num_null_srl)
-    
-    df_master.index.name = CC.DATE
+        for df in dfs:
+            logging.debug("Index %s: %s bis %s (%d)", df.columns.tolist(), df.index[0], df.index[-1], len(df))
+
+    df_master = pd.concat([df_master, *dfs], axis=1, join="outer", sort=False)
+
     df_master.fillna(0, inplace=True)
-    
+    df_master.index.name = CC.DATE
+
     if debug:
         logging.info("Finaler DataFrame: Shape=%s", df_master.shape)
-        logging.debug("Vorschau des finalen DataFrames:\n%s", df_master.head())
-    
     return df_master
-
-
 
 def create_master_df(start_date, end_date):
     master_index = pd.date_range(start=start_date, end=end_date, freq='15T', tz='Europe/Berlin', inclusive='left')
     df = pd.DataFrame(index=master_index)
     return df
 
-def load_da_auc_price_data():
+def load_da_auc_price_data(path_data):
+    pkl_path = get_pickle_path(path_data)
+    if os.path.exists(pkl_path):
+        print(f"Loading data from {pkl_path}")
+        return pd.read_pickle(pkl_path)
+
     df = pd.read_csv(
-        PATH_MARKET_DATA,
+        path_data,
         skiprows=2,
         names=[CC.DATE, CC.DA_PRICE],
         parse_dates=[CC.DATE],
         index_col= [CC.DATE]
     )
     df.index = pd.to_datetime(df.index, utc=True).tz_convert("Europe/Berlin")
+    df.to_pickle(pkl_path)
+    print(f"Data saved to {pkl_path}")
     return df
 
-def load_id_data():
+
+def load_id_data(path_data):
+    pkl_path = get_pickle_path(path_data)
+    if os.path.exists(pkl_path):
+        print(f"Loading data from {pkl_path}")
+        return pd.read_pickle(pkl_path)
+    
     df = pd.read_excel(
-        PATH_INTRADAY_DATA,
-        usecols=['Datum und Uhrzeit (UTC)', CR.ID_PRICE],        # Spalte 0 = Datum, plus die Preis-Spalte
-        index_col=0,                     # setze die Datums-Spalte als Index
-        parse_dates=[0],                 # parse die Index-Spalte als Datetime
-        date_format='%d.%m.%Y, %H:%M',  
-        engine='openpyxl'
+        path_data,
+        usecols=["Datum und Uhrzeit (UTC)", CR.ID_PRICE],
+        index_col=0,
+        parse_dates=[0],
+        date_format="%d.%m.%Y, %H:%M",
+        engine="openpyxl",
+        converters={CR.ID_PRICE: locale.atof}  # liest "1.234,56" korrekt als 1234.56
     )
 
     df.index = (
@@ -111,13 +91,19 @@ def load_id_data():
     df: pd.DataFrame = df[[CR.ID_PRICE]].rename(
         columns={CR.ID_PRICE: CC.ID_PRICE}
 )
-
+    df.to_pickle(pkl_path)
+    print(f"Data saved to {pkl_path}")
     return df
 
     
-def load_prl_data() -> pd.DataFrame:
+def load_prl_data(path_data) -> pd.DataFrame:
+    pkl_path = get_pickle_path(path_data)
+    if os.path.exists(pkl_path):
+        print(f"Loading data from {pkl_path}")
+        return pd.read_pickle(pkl_path)
+    
     df = pd.read_excel(
-        PATH_PRL_DATA,
+        path_data,
         usecols=["DATE_FROM", "PRODUCTNAME", CR.PRL_PRICE],
         parse_dates=["DATE_FROM"],
         engine="openpyxl",           # falls du vorher kein engine explizit hattest
@@ -141,13 +127,20 @@ def load_prl_data() -> pd.DataFrame:
     df = df[[CR.PRL_PRICE]]    # <-- echtes DataFrame, kein Python-List-Literal
     # optional: gleich umbenennen
     df.columns = [ CC.PRL_PRICE ]
-
+    
+    df.to_pickle(pkl_path)
+    print(f"Data saved to {pkl_path}")
     return df
 
 
-def load_srl_power_data() -> pd.DataFrame:
+def load_srl_power_data(path_data) -> pd.DataFrame:
+    pkl_path = get_pickle_path(path_data)
+    if os.path.exists(pkl_path):
+        print(f"Loading data from {pkl_path}")
+        return pd.read_pickle(pkl_path)
+    
     df = pd.read_excel(
-        PATH_SRL_POWER_DATA,
+        path_data,
         usecols=['DATE_FROM', 'DATE_TO', 'PRODUCT', CR.SRL_POWER_PRICE],
         parse_dates=['DATE_FROM', 'DATE_TO'],
         engine='openpyxl',
@@ -178,13 +171,20 @@ def load_srl_power_data() -> pd.DataFrame:
         for d in df_wide.columns
     ]
 
+    df_wide.to_pickle(pkl_path)
+    print(f"Data saved to {pkl_path}")
     return df_wide
 
 
 
-def load_srl_work_data():
+def load_srl_work_data(path_data):
+    pkl_path = get_pickle_path(path_data)
+    if os.path.exists(pkl_path):
+        print(f"Loading data from {pkl_path}")
+        return pd.read_pickle(pkl_path)
+    
     df = pd.read_excel(
-        PATH_SRL_WORK_DATA,
+        path_data,
         usecols=['DELIVERY_DATE', 'PRODUCT', CR.SRL_WORK_PRICE],
         )
     
@@ -220,6 +220,8 @@ def load_srl_work_data():
     
     df_wide = df_wide[[CC.SRL_WORK_PRICE_NEG, CC.SRL_WORK_PRICE_POS]]
     
+    df_wide.to_pickle(pkl_path)
+    print(f"Data saved to {pkl_path}")
     return df_wide
 
 

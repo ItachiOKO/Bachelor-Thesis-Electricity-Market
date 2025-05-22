@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 import pandas as pd
 from config import SYSTEM_POWER
@@ -28,3 +29,13 @@ def convert_datetime_to_string(df: pd.DataFrame) -> pd.DataFrame:
     
     formated_df.index = formatted_index
     return formated_df
+
+
+import os
+import pandas as pd
+
+def get_pickle_path(source_path: str) -> str:
+    base, _ext = os.path.splitext(source_path)
+    return f"{base}.pkl"
+
+
