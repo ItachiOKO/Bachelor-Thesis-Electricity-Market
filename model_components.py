@@ -24,9 +24,9 @@ def set_data(model, da_auc_price_dict, id_price_dict, prl_price_dict, srl_price_
 
 def define_variables(model, charge_rate):
     model.v_DA_AUC_BUY_VOL  = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, charge_rate))
-    model.v_DA_AUC_SELL_VOL = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, charge_rate * EFFICIENCY))
+    model.v_DA_AUC_SELL_VOL = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, charge_rate))
     model.v_ID_BUY_VOL  = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, charge_rate))
-    model.v_ID_SELL_VOL = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, charge_rate * EFFICIENCY))
+    model.v_ID_SELL_VOL = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, charge_rate))
     model.v_BAT_SOC = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, 1))
     model.v_PRL_POWER   = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, SYSTEM_POWER))
     model.v_SRL_POWER_NEG = pyo.Var(model.T, within=pyo.NonNegativeReals, bounds=(0, SYSTEM_POWER))
@@ -35,19 +35,51 @@ def define_variables(model, charge_rate):
     model.v_TAX_BASE  = pyo.Var(domain=pyo.NonNegativeReals)
 
 
-def define_aging_costs(model):
-    def _aging_cost_expr(model, t):
-        c_da_auc = SPECIFIC_AGING_COST * (model.v_DA_AUC_BUY_VOL[t] * EFFICIENCY + model.v_DA_AUC_SELL_VOL[t] / EFFICIENCY)
-        c_id = SPECIFIC_AGING_COST * (model.v_ID_BUY_VOL[t] * EFFICIENCY + model.v_ID_SELL_VOL[t] / EFFICIENCY)
+def define_charge_discharge_expr(model):
+    model.e_DA_AUC_CHARGE = pyo.Expression(
+        model.T,
+        rule=lambda model, t: model.v_DA_AUC_BUY_VOL[t] * EFFICIENCY
+    )
+
+    model.e_DA_AUC_DISCHARGE = pyo.Expression(
+        model.T,    
+        rule=lambda model, t: model.v_DA_AUC_SELL_VOL[t] / EFFICIENCY
+    )
+
+    model.e_ID_CHARGE = pyo.Expression(
+        model.T,
+        rule=lambda model, t: model.v_ID_BUY_VOL[t] * EFFICIENCY
+    )
+
+    model.e_ID_DISCHARGE = pyo.Expression(
+        model.T,
+        rule=lambda model, t: model.v_ID_SELL_VOL[t] / EFFICIENCY
+    )
+    
+    model.e_CHARGE = pyo.Expression(
+        model.T,
+        rule=lambda model, t: model.e_DA_AUC_CHARGE[t] + model.e_ID_CHARGE[t]
+    )
+
+    model.e_DISCHARGE = pyo.Expression(
+        model.T,
+        rule=lambda model, t: model.e_DA_AUC_DISCHARGE[t] + model.e_ID_DISCHARGE[t]
+    )
+
+
+
+def define_aging_cost_expr(model):
+    def aging_cost_rule(model, t):
+        c_exchange = SPECIFIC_AGING_COST * (model.e_CHARGE[t] + model.e_DISCHARGE[t])
         c_prl = SPECIFIC_AGING_COST * SPECIFIC_PRL_ENERGY_NEED_4H_CYCLE * model.v_PRL_POWER[t]
         c_srl = SPECIFIC_AGING_COST * (SPECIFIC_SRL_ENERGY_NEED_4H_CYCLE * (model.v_SRL_POWER_NEG[t] + model.v_SRL_POWER_POS[t]))
-        return c_da_auc + c_id + c_prl + c_srl
+        return c_exchange + c_prl + c_srl
 
-    model.e_AGING_COST     = pyo.Expression(model.T, rule=_aging_cost_expr)
+    model.e_AGING_COST     = pyo.Expression(model.T, rule=aging_cost_rule)
     model.e_AGING_COST_SUM = pyo.Expression(expr=sum(model.e_AGING_COST[t] for t in model.T))
 
 
-def define_profit_expressions(model):
+def define_profit_expr(model):
     model.e_REVENUE_DA_AUC = pyo.Expression(
         expr = sum(
             model.v_DA_AUC_SELL_VOL[t] * model.p_DA_PRICE[t]
@@ -88,10 +120,10 @@ def define_tax_expression(model):
 
 
 def define_objective(model):
-    def _profit_rule(model):
+    def profit_rule(model):
         return model.e_TOTAL_REVEVNUE - model.e_AGING_COST_SUM - model.e_TAX
 
-    model.OBJ = pyo.Objective(rule=_profit_rule, sense=pyo.maximize)
+    model.OBJ = pyo.Objective(rule=profit_rule, sense=pyo.maximize)
 
 
 def add_constraints(model, time_points):

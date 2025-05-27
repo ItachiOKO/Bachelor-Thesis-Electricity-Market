@@ -1,6 +1,6 @@
 #Data Config
 START_DATE = "2023-01-01" #included
-END_DATE = "2023-01-09" #excluded
+END_DATE = "2023-01-06" #excluded
 PATH_DA_AUC_DATA = "data\energy-charts_Stromproduktion_und_Börsenstrompreise_in_Deutschland_2023.csv"
 PATH_INTRADAY_DATA = "data\Energy-Charts - 2023 - Komplett.xlsx"
 PATH_PRL_DATA = "data\RESULT_OVERVIEW_CAPACITY_MARKET_FCR_2023-01-01_2023-12-31.xlsx"
@@ -13,7 +13,7 @@ BAT_CAPACITY = 1 #MWh
 SYSTEM_POWER = 1 #MW (1MW = 1MWh/1h)
 BAT_PRICE = 270000 * BAT_CAPACITY #€
 LIFETIME_CYCLES = 9000
-EFFICIENCY = 0.86 # einseitiger Wirkungsgrad (jeweils Lade- und Entladeverluste)
+EFFICIENCY = 0.86 # AC Seitig vom Umrichter. einseitiger Wirkungsgrad (jeweils Lade- und Entladeverluste)
 SPECIFIC_AGING_COST = BAT_PRICE / (BAT_CAPACITY * LIFETIME_CYCLES * 2) #€/(MWh*Cycle)
 
 
