@@ -22,6 +22,16 @@ def add_market_choice_constraint(model, time_points):
         ) == 1
     model.c_ONE_MODE_ONLY = pyo.Constraint(model.T, rule=one_mode_per_t_rule)
 
+    def mode_sos_rule(m, t):
+        iv = m.time_to_interval[t]
+        return [
+            m.v_MODE_DA_AUC[t],
+            m.v_MODE_ID[t],
+            m.v_MODE_PRL[iv],
+            m.v_MODE_SRL[iv],
+        ]
+    model.SOS_ONE_MODE = pyo.SOSConstraint(model.T,rule=mode_sos_rule,sos=1)
+
 
 
     _add_dayahead_mode_constraints(model)
