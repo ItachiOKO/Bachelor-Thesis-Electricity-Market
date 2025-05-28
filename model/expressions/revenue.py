@@ -36,5 +36,5 @@ def define_revenue_expr(model):
     )
     
     model.e_TOTAL_REVEVNUE = pyo.Expression(
-        expr = model.e_REVENUE_DA_AUC +  model.e_REVENUE_ID + model.e_REVENUE_PRL + model.e_REVENUE_SRL
+        expr = model.e_REVENUE_DA_AUC +  model.e_REVENUE_ID + model.e_REVENUE_PRL +  model.e_REVENUE_SRL
     )
