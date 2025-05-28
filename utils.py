@@ -9,8 +9,10 @@ def get_interval_minutes(df: pd.DataFrame) -> int:
     time_interval = diffs.mode()[0]
     return int(time_interval.total_seconds() / 60)
 
+
 def calculate_period_in_days(start_date: str, end_date: str) -> int:
     return (datetime.strptime(end_date, '%Y-%m-%d') - datetime.strptime(start_date, '%Y-%m-%d')).days
+
 
 def get_charge_rate(interval_minutes):
     return SYSTEM_POWER * (interval_minutes/60)
@@ -30,9 +32,6 @@ def convert_datetime_to_string(df: pd.DataFrame) -> pd.DataFrame:
     formated_df.index = formatted_index
     return formated_df
 
-
-import os
-import pandas as pd
 
 def get_pickle_path(source_path: str) -> str:
     base, _ext = os.path.splitext(source_path)
