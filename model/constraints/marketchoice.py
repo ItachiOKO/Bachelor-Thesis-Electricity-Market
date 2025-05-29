@@ -16,7 +16,6 @@ def add_market_choice_constraint(model, time_points):
         iv = model.time_to_interval[t]
         return (
             model.v_MODE_DA_AUC[t]
-          + model.v_MODE_ID[t]
           + model.v_MODE_PRL[iv]
           + model.v_MODE_SRL[iv]
         ) == 1
@@ -26,7 +25,6 @@ def add_market_choice_constraint(model, time_points):
         iv = m.time_to_interval[t]
         return [
             m.v_MODE_DA_AUC[t],
-            m.v_MODE_ID[t],
             m.v_MODE_PRL[iv],
             m.v_MODE_SRL[iv],
         ]
@@ -35,7 +33,6 @@ def add_market_choice_constraint(model, time_points):
 
 
     _add_dayahead_mode_constraints(model)
-    _add_id_mode_constraints(model)
     _add_prl_mode_constraints(model)
     _add_srl_mode_constraints(model)
 
@@ -49,20 +46,12 @@ def _add_dayahead_mode_constraints(model):
         return model.v_DA_AUC_SELL_VOL[t] <= model.v_DA_AUC_SELL_VOL[t].ub * model.v_MODE_DA_AUC[t]
     model.c_MODE_DA_SELL = pyo.Constraint(model.T, rule=sell_rule)
 
-def _add_id_mode_constraints(model):
-    def buy_rule(model, t):
-        return model.v_ID_BUY_VOL[t] <= model.v_ID_BUY_VOL[t].ub * model.v_MODE_ID[t]
-    model.c_MODE_ID_BUY = pyo.Constraint(model.T, rule=buy_rule)
-
-    def sell_rule(model, t):
-        return model.v_ID_SELL_VOL[t] <= model.v_ID_SELL_VOL[t].ub * model.v_MODE_ID[t]
-    model.c_MODE_ID_SELL = pyo.Constraint(model.T, rule=sell_rule)
 
 
 def _add_prl_mode_constraints(model):
     def prl_rule(model, t):
         iv = model.time_to_interval[t]
-        return model.v_PRL_POWER[t] <= model.v_PRL_POWER[t].ub * model.v_MODE_PRL[iv]
+        return model.v_PRL_POWER[t] == model.v_PRL_POWER[t].ub * model.v_MODE_PRL[iv]
     model.c_MODE_PRL_POWER = pyo.Constraint(model.T, rule=prl_rule)
 
 

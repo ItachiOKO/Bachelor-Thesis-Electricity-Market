@@ -12,13 +12,7 @@ def define_revenue_expr(model):
           for t in model.T
         )
     )
-    model.e_REVENUE_ID = pyo.Expression(
-        expr = sum(
-            model.v_ID_SELL_VOL[t] * model.p_ID_PRICE[t]
-          - model.v_ID_BUY_VOL[t]  * model.p_ID_PRICE[t]
-          for t in model.T
-        )
-    )
+
     model.e_REVENUE_PRL = pyo.Expression(
         expr = sum(
             model.p_PRLPRICE[t] * model.v_PRL_POWER[t]
@@ -36,5 +30,5 @@ def define_revenue_expr(model):
     )
     
     model.e_TOTAL_REVEVNUE = pyo.Expression(
-        expr = model.e_REVENUE_DA_AUC +  model.e_REVENUE_ID + model.e_REVENUE_PRL +  model.e_REVENUE_SRL
+        expr = model.e_REVENUE_DA_AUC + model.e_REVENUE_PRL +  model.e_REVENUE_SRL
     )

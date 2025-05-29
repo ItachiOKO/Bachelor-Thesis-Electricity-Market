@@ -22,7 +22,6 @@ from config import (
 def main_optimisation(df_data_period):
     time_points = df_data_period.index.tolist()
     da_auc_price_dict = df_data_period[CC.DA_PRICE].to_dict()
-    id_price_dict = df_data_period[CC.ID_PRICE].to_dict()
     prl_price_dict = df_data_period[CC.PRL_PRICE].to_dict()
     srl_power_price_neg_dict = df_data_period[CC.SRL_POWER_PRICE_NEG].to_dict()
     srl_power_price_pos_dict = df_data_period[CC.SRL_POWER_PRICE_POS].to_dict()
@@ -31,7 +30,7 @@ def main_optimisation(df_data_period):
 
     charge_rate = SYSTEM_POWER * (get_interval_minutes(df_data_period)/60)
 
-    model = setup_model(time_points, da_auc_price_dict, id_price_dict, prl_price_dict, srl_power_price_neg_dict, srl_power_price_pos_dict, srl_work_price_neg_dict, srl_work_price_pos_dict, charge_rate)
+    model = setup_model(time_points, da_auc_price_dict, prl_price_dict, srl_power_price_neg_dict, srl_power_price_pos_dict, srl_work_price_neg_dict, srl_work_price_pos_dict, charge_rate)
     solve_model(model)
     return model
 

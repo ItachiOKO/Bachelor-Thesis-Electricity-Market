@@ -6,7 +6,6 @@ from config import (
 
 
 def add_prl_constraints(model):
-    M = 0.5 / BAT_CAPACITY
     def battery_soc_lower_rule(model, t):
         return model.v_BAT_SOC[t] * BAT_CAPACITY >= 0.5 * model.v_PRL_POWER[t] 
     model.c_PRL_BAT_SOC_LOWER = pyo.Constraint(model.T, rule=battery_soc_lower_rule)
