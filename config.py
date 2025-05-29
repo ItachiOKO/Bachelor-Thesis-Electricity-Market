@@ -3,7 +3,7 @@ from pathlib import Path
 
 #Data Config
 START_DATE = "2023-01-01" #included
-END_DATE = "2024-01-01" #excluded
+END_DATE = "2023-01-15" #excluded
 PATH_DA_AUC_DATA = "data\energy-charts_Stromproduktion_und_Börsenstrompreise_in_Deutschland_2023.csv"
 PATH_INTRADAY_DATA = "data\Energy-Charts - 2023 - Komplett.xlsx"
 PATH_PRL_DATA = "data\RESULT_OVERVIEW_CAPACITY_MARKET_FCR_2023-01-01_2023-12-31.xlsx"
