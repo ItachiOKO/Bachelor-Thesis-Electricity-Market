@@ -1,0 +1,34 @@
+import pandas as pd
+import re
+from pathlib import Path
+import glob
+
+def normalize_col(col: str) -> str:
+    col = col.lower()
+    col = re.sub(r"\s*\(.*?\)", "", col)
+    return col.strip()
+
+# 1) Dateien auflisten
+files = sorted(glob.glob("Energy-Charts - *.xlsx"))
+
+dfs = []
+for file in files:
+    stem = Path(file).stem
+    
+    # 2) kompletten DF einlesen
+    df = pd.read_excel(file)
+    
+    # 3) Spalten umbenennen
+    df = df.rename(columns={c: normalize_col(c) for c in df.columns})
+    
+    # 4) Quelle merken (optional, hilft später bei Nachvollziehbarkeit)
+    df["source_file"] = stem
+    
+    dfs.append(df)
+
+# 5) vertikal zusammenführen – outer-join auf Spalten
+merged = pd.concat(dfs, ignore_index=True, sort=False)
+
+# als excel speichern
+output_file = "Energy-Charts 2021 bis 2024.xlsx"
+merged.to_excel(output_file, index=False)
