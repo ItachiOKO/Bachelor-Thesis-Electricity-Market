@@ -1,7 +1,9 @@
 import time
-import locale
 import pandas as pd
+from utils import convert_datetime_to_string
 from config import (
+    ColumnNamesRaw as CR,
+    ColumnNamesClean as CC,
     START_DATE,
     END_DATE,
     PATH_DA_AUC_DATA,
@@ -9,35 +11,35 @@ from config import (
     PATH_SRL_POWER_DATA,
     PATH_SRL_WORK_DATA,
     PATH_INTRADAY_DATA,
-    ColumnNamesClean as CC,
 )
+
 from dataloader import (
-    load_da_auc_price_data,
-    load_id_data,
+    load_da_auc_data,
+    load_id_auc_data,
+    load_compared_auc_data,
     load_prl_data,
     load_srl_power_data,
     load_srl_work_data,
+
 )
-from utils import convert_datetime_to_string, get_pickle_path
 
 import logging
-
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def create_dataframe(start_date, end_date, debug=False):
     df_master = create_master_df(start_date, end_date)
+
     loader_tasks = [
-        (load_da_auc_price_data,   PATH_DA_AUC_DATA),     # Day-Ahead
-        (load_id_data,             PATH_INTRADAY_DATA),   # Intraday
-        (load_prl_data,            PATH_PRL_DATA),        # PRL
-        (load_srl_power_data,      PATH_SRL_POWER_DATA),  # SRL Power
-        (load_srl_work_data,       PATH_SRL_WORK_DATA),   # SRL Energy
+        (load_compared_auc_data, (PATH_DA_AUC_DATA, PATH_INTRADAY_DATA, CR.ENERGIE_CHARTS_DATE, CR.DA_AUC_PRICE, CC.DA_AUC_PRICE, CR.ID_PRICE_AUC_15min, CR.ID_PRICE_AUC_IDA1_GEKOPPELT, CC.ID_AUC_PRICE)),
+        (load_prl_data,          (PATH_PRL_DATA, CR.PRL_PRICE, CC.DATE, CC.PRL_PRICE)),
+        (load_srl_power_data,    (PATH_SRL_POWER_DATA, CR.SRL_POWER_PRICE, CC.SRL_POWER_PRICE_POS, CC.SRL_POWER_PRICE_NEG)),
+        (load_srl_work_data,     (PATH_SRL_WORK_DATA, CC.SRL_WORK_PRICE_NEG, CC.SRL_WORK_PRICE_POS))
     ]
 
-    for loader, path in loader_tasks:
-        df = loader(path)
+    for loader, args in loader_tasks:
+        df = loader(*args)
         if debug:
             logging.debug(
                 "Joining %s: %s bis %s (%d)",
@@ -52,6 +54,7 @@ def create_dataframe(start_date, end_date, debug=False):
     return df_master
 
 
+
 def create_master_df(start_date, end_date):
     master_index = pd.date_range(start=start_date, end=end_date, freq='15T', tz='Europe/Berlin', inclusive='left')
     df = pd.DataFrame(index=master_index)
@@ -61,10 +64,10 @@ def create_master_df(start_date, end_date):
 if __name__ == "__main__":
     # mesure time
     start_time = time.time()
-    df = create_dataframe(START_DATE, END_DATE, debug=False)
+    df = create_dataframe(START_DATE, END_DATE, debug=True)
     print(f"Berechnungszeit: {round(time.time() - start_time, 1)} Sekunden")
     print(df)
     # to excel
 
     formated_df = convert_datetime_to_string(df)       
-    formated_df.to_excel("market_price_data.xlsx", index=True, sheet_name="Market Price Data")
+    formated_df.to_excel("data/market_price_data.xlsx", index=True, sheet_name="Market Price Data")

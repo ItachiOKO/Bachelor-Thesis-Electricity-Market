@@ -2,13 +2,14 @@ from pathlib import Path
 
 
 #Data Config
-START_DATE = "2023-01-01" #included
-END_DATE = "2023-01-15" #excluded
-PATH_DA_AUC_DATA = "data\energy-charts_Stromproduktion_und_Börsenstrompreise_in_Deutschland_2023.csv"
-PATH_INTRADAY_DATA = "data\Energy-Charts - 2023 - Komplett.xlsx"
-PATH_PRL_DATA = "data\RESULT_OVERVIEW_CAPACITY_MARKET_FCR_2023-01-01_2023-12-31.xlsx"
-PATH_SRL_POWER_DATA = 'data/Leistung_Ergebnisse_SRL_2023-01-01_2023-12-31.xlsx'
-PATH_SRL_WORK_DATA = 'data/Arbeit_Ergebnisse_2023_SRL_2023-01-01_2023-12-31.xlsx'
+START_DATE = "2021-01-01" #included
+END_DATE = "2021-01-02" #excluded
+
+PATH_DA_AUC_DATA = "data\Energy-Charts DayAhead 2021 bis 2024.xlsx"
+PATH_INTRADAY_DATA = "data\Energy-Charts Intraday 2021 bis 2024.xlsx"
+PATH_PRL_DATA = "data\Primär Ergebnisse 2021 bis 2024.xlsx"
+PATH_SRL_POWER_DATA = 'data/Sekundär Leistung Ergebnisse 2021 bis 2024.xlsx'
+PATH_SRL_WORK_DATA = 'data/Sekundär Arbeit Ergebnisse 2021 bis 2024.xlsx'
 
 
 #Battery Config
@@ -33,16 +34,23 @@ RESULTS_FILE_NAME_PICKLE = f"results_{BAT_CAPACITY}MWH_SCR-{SYSTEM_POWER}MW_P-{B
 
 #Table Config
 class ColumnNamesRaw:
-    ID_PRICE         = 'Intraday Auktion, 15 Minuten Preis (DE-LU) (EUR / MWh)'
-    PRL_PRICE        = 'GERMANY_SETTLEMENTCAPACITY_PRICE_[EUR/MW]' #€/MWh
-    SRL_POWER_PRICE  = 'GERMANY_AVERAGE_CAPACITY_PRICE_[(EUR/MW)/h]' #€/MWh
-    SRL_WORK_PRICE = 'GERMANY_AVERAGE_ENERGY_PRICE_[EUR/MWh]' #€/MWh
+    ENERGIE_CHARTS_DATE         = 'datum und uhrzeit'
+    DA_AUC_PRICE                = 'day ahead auktion exaa' # Day-Ahead Auction Price (EUR / MWh)
+    ID_PRICE_AUC_15min          = 'intraday auktion, 15 minuten preis'
+    ID_PRICE_AUC_IDA1_GEKOPPELT = 'gekoppelte intraday auktion, 15 minuten ida1-preis'
+    PRL_PRICE                   = 'DE_SETTLEMENTCAPACITY_PRICE_[EUR/MW]' #€/MWh
+    SRL_POWER_PRICE             = 'GERMANY_AVERAGE_CAPACITY_PRICE_[(EUR/MW)/h]' #€/MWh; muss neu aus original Daten gezogen werden wenn geändert wird
+    SRL_WORK_PRICE              = 'GERMANY_AVERAGE_ENERGY_PRICE_[EUR/MWh]' #€/MWh, nur die Spalte enthalten, ggf. neu aus original Daten ziehen wenn geändert wird
 
 
 class ColumnNamesClean:
     DATE                 = 'Date'
-    DA_PRICE             = 'Day-Ahead Price'
-    ID_PRICE             = 'Intra-Day Price'
+    DA_AUC_PRICE            = 'DA'
+    ID_AUC_PRICE             = 'ID'
+    HiGHER_MARKET_PRICE = 'Higher Market Price'
+    LOWER_MARKET_PRICE  = 'Lower Market Price'
+    MARKET_HI            = 'Market Higher'
+    MARKET_LO            = 'Market Lower'
 
     PRL_PRICE            = 'PRL Price'
     SRL_POWER_PRICE_POS  = 'SRL Power Price Pos'

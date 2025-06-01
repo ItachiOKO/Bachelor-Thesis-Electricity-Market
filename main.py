@@ -21,7 +21,7 @@ from config import (
 
 def main_optimisation(df_data_period):
     time_points = df_data_period.index.tolist()
-    da_auc_price_dict = df_data_period[CC.DA_PRICE].to_dict()
+    da_auc_price_dict = df_data_period[CC.DA_AUC_PRICE].to_dict()
     prl_price_dict = df_data_period[CC.PRL_PRICE].to_dict()
     srl_power_price_neg_dict = df_data_period[CC.SRL_POWER_PRICE_NEG].to_dict()
     srl_power_price_pos_dict = df_data_period[CC.SRL_POWER_PRICE_POS].to_dict()

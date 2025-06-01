@@ -10,7 +10,7 @@ from config import (
 )
 
 
-def compare_da_id(da_df: pd.DataFrame, id_df: pd.DataFrame) -> pd.DataFrame:
+def compare_da_id_prices(da_df: pd.DataFrame, id_df: pd.DataFrame) -> pd.DataFrame:
 
     df = pd.concat([da_df, id_df], axis=1)
     higher = df[[CC.DA_AUC_PRICE, CC.ID_AUC_PRICE]].max(axis=1)
@@ -29,6 +29,13 @@ def compare_da_id(da_df: pd.DataFrame, id_df: pd.DataFrame) -> pd.DataFrame:
     return result
 
 
+def load_compared_auc_data(path_da, path_id, cr_energie_charts_date, cr_da_auc_price, cc_da_auc_price, cr_id_price_auc_15min, cr_id_price_auc_ida1_gekoppelt, cc_id_auc_price) -> pd.DataFrame:
+
+    da_df = load_da_auc_data(path_da, cr_energie_charts_date, cr_da_auc_price, cc_da_auc_price)
+    id_df = load_id_auc_data(path_id, cr_energie_charts_date, cr_id_price_auc_15min, cr_id_price_auc_ida1_gekoppelt, cc_id_auc_price )
+
+    return compare_da_id_prices(da_df, id_df)
+
 
 if __name__ == "__main__":
 
@@ -43,6 +50,6 @@ if __name__ == "__main__":
                         CR.ID_PRICE_AUC_IDA1_GEKOPPELT,
                         CC.ID_AUC_PRICE)
 
-    df_compare = compare_da_id(da, id)
+    df_compare = compare_da_id_prices(da, id)
     print(df_compare.head())
 

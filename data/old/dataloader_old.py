@@ -179,5 +179,3 @@ def load_srl_work_data(path_data):
     df_wide.to_pickle(pkl_path)
     print(f"Data saved to {pkl_path}")
     return df_wide
-
-
