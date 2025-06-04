@@ -5,10 +5,10 @@ from config import (
 
 
 def define_revenue_expr(model):
-    model.e_REVENUE_DA_AUC = pyo.Expression(
+    model.e_REVENUE_MARKET = pyo.Expression(
         expr = sum(
-            model.v_DA_AUC_SELL_VOL[t] * model.p_DA_PRICE[t]
-          - model.v_DA_AUC_BUY_VOL[t]  * model.p_DA_PRICE[t]
+            model.v_DA_AUC_SELL_VOL[t] * model.p_HIGHER_MARKET_PRICE[t]
+          - model.v_DA_AUC_BUY_VOL[t]  * model.p_LOWER_MARKET_PRICE[t]
           for t in model.T
         )
     )
@@ -30,5 +30,5 @@ def define_revenue_expr(model):
     )
     
     model.e_TOTAL_REVEVNUE = pyo.Expression(
-        expr = model.e_REVENUE_DA_AUC + model.e_REVENUE_PRL +  model.e_REVENUE_SRL
+        expr = model.e_REVENUE_MARKET + model.e_REVENUE_PRL +  model.e_REVENUE_SRL
     )

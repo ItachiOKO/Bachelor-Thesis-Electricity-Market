@@ -33,6 +33,8 @@ def create_dataframe(start_date, end_date, debug=False):
 
     loader_tasks = [
         (load_compared_auc_data, (PATH_DA_AUC_DATA, PATH_INTRADAY_DATA, CR.ENERGIE_CHARTS_DATE, CR.DA_AUC_PRICE, CC.DA_AUC_PRICE, CR.ID_PRICE_AUC_15min, CR.ID_PRICE_AUC_IDA1_GEKOPPELT, CC.ID_AUC_PRICE)),
+        #(load_da_auc_data,      (PATH_DA_AUC_DATA, CR.ENERGIE_CHARTS_DATE, CR.DA_AUC_PRICE, CC.DA_AUC_PRICE)),
+        #(load_id_auc_data,      (PATH_INTRADAY_DATA, CR.ENERGIE_CHARTS_DATE, CR.ID_PRICE_AUC_15min, CR.ID_PRICE_AUC_IDA1_GEKOPPELT, CC.ID_AUC_PRICE)),
         (load_prl_data,          (PATH_PRL_DATA, CR.PRL_PRICE, CC.DATE, CC.PRL_PRICE)),
         (load_srl_power_data,    (PATH_SRL_POWER_DATA, CR.SRL_POWER_PRICE, CC.SRL_POWER_PRICE_POS, CC.SRL_POWER_PRICE_NEG)),
         (load_srl_work_data,     (PATH_SRL_WORK_DATA, CC.SRL_WORK_PRICE_NEG, CC.SRL_WORK_PRICE_POS))
@@ -67,6 +69,7 @@ if __name__ == "__main__":
     df = create_dataframe(START_DATE, END_DATE, debug=True)
     print(f"Berechnungszeit: {round(time.time() - start_time, 1)} Sekunden")
     print(df)
+    print(len(df))
     # to excel
 
     formated_df = convert_datetime_to_string(df)       

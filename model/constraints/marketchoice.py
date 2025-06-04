@@ -45,13 +45,7 @@ def _add_dayahead_mode_constraints(model):
         return m.v_DA_AUC_SELL_VOL[t] <= m.v_DA_AUC_SELL_VOL[t].ub * m.v_MODE_DA_AUC[t]
     model.c_MODE_DA_SELL_UB = pyo.Constraint(model.T, rule=sell_ub_rule)
 
-    def da_min_total_rule(m, t):
-        return (
-            m.v_DA_AUC_BUY_VOL[t]
-          + m.v_DA_AUC_SELL_VOL[t]
-          >= 0.25 * m.v_MODE_DA_AUC[t]
-        )
-    model.c_MODE_DA_MIN_TOTAL = pyo.Constraint(model.T, rule=da_min_total_rule)
+
 
     def da_sos1_rule(m, t):
         return [

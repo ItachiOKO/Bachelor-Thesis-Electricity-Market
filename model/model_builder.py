@@ -12,11 +12,11 @@ def solve_model(model):
     return solver.solve(model, tee=False)
 
 
-def setup_model(time_points, da_auc_price_dict, prl_price_dict, srl_power_price_neg_dict, srl_power_price_pos_dict, srl_work_price_neg_dict, srl_work_price_pos_dict, charge_rate):	
+def setup_model(time_points, higher_market_price_dict, lower_market_price_dict, prl_price_dict, srl_power_price_neg_dict, srl_power_price_pos_dict, srl_work_price_neg_dict, srl_work_price_pos_dict, charge_rate):	
     model = pyo.ConcreteModel()
     model.T = pyo.Set(initialize=time_points, ordered=True)
 
-    define_params(model, da_auc_price_dict, prl_price_dict, srl_power_price_neg_dict, srl_power_price_pos_dict, srl_work_price_neg_dict, srl_work_price_pos_dict)
+    define_params(model, higher_market_price_dict, lower_market_price_dict, prl_price_dict, srl_power_price_neg_dict, srl_power_price_pos_dict, srl_work_price_neg_dict, srl_work_price_pos_dict)
     define_variables(model, charge_rate)
     define_all_expressions(model)
     add_all_constraints(model, time_points)
