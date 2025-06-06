@@ -12,4 +12,10 @@ def extract_pyo_results_to_df(df, model):
     df[CC.PRL_POWER] = [pyo.value(model.v_PRL_POWER[t]) for t in model.T]
     df[CC.SRL_POWER_NEG] = [pyo.value(model.v_SRL_POWER_NEG[t]) for t in model.T]
     df[CC.SRL_POWER_POS] = [pyo.value(model.v_SRL_POWER_POS[t]) for t in model.T]
+    # revenues
+    df[CC.REVENUE_MARKET] = [pyo.value(model.e_REVENUE_MARKET[t]) for t in model.T]
+    df[CC.REVENUE_PRL] = [pyo.value(model.e_REVENUE_PRL[t]) for t in model.T]
+    df[CC.REVENUE_SRL] = [pyo.value(model.e_REVENUE_SRL[t]) for t in model.T]
+    df[CC.REVENUE_TOTAL] = [pyo.value(model.e_TOTAL_REVENUE[t]) for t in model.T]
+
     return df
