@@ -12,12 +12,13 @@ def solve_model(model):
     return solver.solve(model, tee=False)
 
 
-def setup_model(time_points, higher_market_price_dict, lower_market_price_dict, prl_price_dict, srl_power_price_neg_dict, srl_power_price_pos_dict, srl_work_price_neg_dict, srl_work_price_pos_dict, charge_rate):	
+def setup_model(df_data_period):
+    time_points = df_data_period.index.tolist()	
     model = pyo.ConcreteModel()
     model.T = pyo.Set(initialize=time_points, ordered=True)
 
-    define_params(model, higher_market_price_dict, lower_market_price_dict, prl_price_dict, srl_power_price_neg_dict, srl_power_price_pos_dict, srl_work_price_neg_dict, srl_work_price_pos_dict)
-    define_variables(model, charge_rate)
+    define_params(model, df_data_period)
+    define_variables(model)
     define_all_expressions(model)
     add_all_constraints(model, time_points)
     define_objective(model)

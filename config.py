@@ -2,8 +2,8 @@ from pathlib import Path
 
 
 #Data Config
-START_DATE = "2021-01-01" #included
-END_DATE = "2021-01-02" #excluded
+START_DATE = "2021-01-04" #included
+END_DATE = "2021-01-10" #excluded
 
 PATH_DA_AUC_DATA = "data\Energy-Charts DayAhead 2021 bis 2024.xlsx"
 PATH_INTRADAY_DATA = "data\Energy-Charts Intraday 2021 bis 2024.xlsx"
@@ -19,6 +19,7 @@ BAT_PRICE = 270000 * BAT_CAPACITY #€
 LIFETIME_CYCLES = 9000
 EFFICIENCY = 0.86 # AC Seitig vom Umrichter. einseitiger Wirkungsgrad (jeweils Lade- und Entladeverluste)
 SPECIFIC_AGING_COST = BAT_PRICE / (BAT_CAPACITY * LIFETIME_CYCLES * 2) #€/(MWh*Cycle)
+CHARGE_RATE = SYSTEM_POWER * (15/60) 
 
 
 #Regelleistungsmarkt Config
@@ -69,5 +70,8 @@ class ColumnNamesClean:
     SRL_POWER_NEG        = 'SRL Power Neg'
     AGING_COST           = 'Aging Cost'
     
-    PROFIT_CALC          = 'Profit'
-    ORDER_COST           = 'Net order value'
+    REVENUE_MARKET       = 'Revenue Market'
+    REVENUE_PRL          = 'Revenue PRL'    
+    REVENUE_SRL          = 'Revenue SRL'
+    REVENUE_TOTAL        = 'Total Revenue'
+    REVENUE_TOTAL_SUM   = 'Total Revenue Sum'
