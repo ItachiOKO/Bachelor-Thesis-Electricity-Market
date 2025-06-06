@@ -18,8 +18,8 @@ def add_market_choice_constraint(model, time_points):
             model.v_MODE_DA_AUC[t]
           + model.v_MODE_PRL[iv]
           + model.v_MODE_SRL[iv]
-        ) == 1
-    model.c_ONE_MODE_ONLY = pyo.Constraint(model.T, rule=one_mode_per_t_rule)
+        ) <= 1
+    #model.c_ONE_MODE_ONLY = pyo.Constraint(model.T, rule=one_mode_per_t_rule)
 
     def mode_sos_rule(m, t):
         iv = m.time_to_interval[t]
@@ -62,13 +62,13 @@ def _add_dayahead_mode_constraints(model):
 def _add_prl_mode_constraints(model):
     def prl_ub_rule(model, t):
         iv = model.time_to_interval[t]
-        return model.v_PRL_POWER[t] <= model.v_PRL_POWER[t].ub * model.v_MODE_PRL[iv]
+        return model.v_PRL_POWER[t] == model.v_PRL_POWER[t].ub * model.v_MODE_PRL[iv]
     model.c_MODE_PRL_POWER_UB = pyo.Constraint(model.T, rule=prl_ub_rule)
 
     def prl_lb_rule(model, t):
         iv = model.time_to_interval[t]
         return model.v_PRL_POWER[t] >= 1 * model.v_MODE_PRL[iv]
-    model.c_MODE_PRL_POWER_LB = pyo.Constraint(model.T, rule=prl_lb_rule)
+    #model.c_MODE_PRL_POWER_LB = pyo.Constraint(model.T, rule=prl_lb_rule)
 
 
 def _add_srl_mode_constraints(model):
