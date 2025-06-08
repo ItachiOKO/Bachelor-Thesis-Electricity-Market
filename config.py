@@ -2,8 +2,8 @@ from pathlib import Path
 
 
 #Data Config
-START_DATE = "2021-01-04" #included
-END_DATE = "2021-01-10" #excluded
+START_DATE = "2021-12-30" #included
+END_DATE = "2022-01-05" #excluded
 
 PATH_DA_AUC_DATA = "data\Energy-Charts DayAhead 2021 bis 2024.xlsx"
 PATH_INTRADAY_DATA = "data\Energy-Charts Intraday 2021 bis 2024.xlsx"
