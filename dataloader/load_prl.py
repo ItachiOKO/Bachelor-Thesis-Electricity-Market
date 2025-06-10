@@ -6,7 +6,7 @@ from utils import get_pickle_path
 def load_prl_data(path, cr_prl_price, cc_date, cc_prl_price) -> pd.DataFrame:
     pkl_path = get_pickle_path(path)
     if os.path.exists(pkl_path):
-        print(f"Loading data from {pkl_path}")
+        #print(f"Loading data from {pkl_path}")
         return pd.read_pickle(pkl_path)
     
     df = pd.read_excel(

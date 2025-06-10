@@ -45,6 +45,7 @@ class ColumnNamesRaw:
 
 
 class ColumnNamesClean:
+    #data
     DATE                 = 'Date'
     DA_AUC_PRICE            = 'DA'
     ID_AUC_PRICE             = 'ID'
@@ -59,7 +60,7 @@ class ColumnNamesClean:
     SRL_WORK_PRICE_POS   = 'SRL Wokr Price Pos'
     SRL_WORK_PRICE_NEG   = 'SRL Wokr Price Neg'
 
-
+    #results
     DA_AUC_BUY_VOL       = 'Buy Volume Day-Ahead Auc'
     DA_AUC_SELL_VOL      = 'Sell Volume Day-Ahead Auc'
     ID_BUY_VOL           = 'Buy Volume Intraday'
@@ -74,4 +75,22 @@ class ColumnNamesClean:
     REVENUE_PRL          = 'Revenue PRL'    
     REVENUE_SRL          = 'Revenue SRL'
     REVENUE_TOTAL        = 'Total Revenue'
-    REVENUE_TOTAL_SUM   = 'Total Revenue Sum'
+
+    #attrs
+    PRL_POWER_SUM       = 'PRL Power Sum'
+    SRL_POWER_POS_SUM   = 'SRL Power Pos Sum'
+    SRL_POWER_NEG_SUM   = 'SRL Power Neg Sum'
+    AGING_COST_SUM      = 'Aging Cost Sum'
+
+
+    REVENUE_MARKET_SUM  = 'Revenue Market Sum'
+    REVENUE_PRL_SUM     = 'Revenue PRL Sum'
+    REVENUE_SRL_SUM     = 'Revenue SRL Sum'  
+    TOTAL_REVENUE_SUM   = 'Total Revenue Sum'
+    TAXES_SUM           = 'Taxes Sum'
+    OBJ                 = 'Objective Value'
+
+
+
+
+

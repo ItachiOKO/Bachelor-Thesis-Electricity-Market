@@ -4,5 +4,5 @@ from config_cost import (
 )
 
 
-def define_tax_expression(model):
+def define_tax_expr(model):
     model.e_TAX = pyo.Expression(expr = TAX_RATE * model.v_TAX_BASE)
