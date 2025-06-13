@@ -7,56 +7,47 @@ def add_market_choice_constraint(model, time_points):
     model.time_to_interval = {t: (t.date(), t.hour // 4) for t in time_points}
 
 
-    model.v_MODE_DA_AUC = pyo.Var(model.T, domain=pyo.Binary) #alle 15 Minuten
-    model.v_MODE_ID = pyo.Var(model.T, domain=pyo.Binary) #alle 15 Minuten
+    model.v_MODE_MARKET = pyo.Var(model.T, domain=pyo.Binary) #alle 15 Minuten
     model.v_MODE_PRL      = pyo.Var(model.D4, domain=pyo.Binary) # alle 4 Stunden
     model.v_MODE_SRL      = pyo.Var(model.D4, domain=pyo.Binary) # alle 4 Stunden
 
-    def one_mode_per_t_rule(model, t):
-        iv = model.time_to_interval[t]
-        return (
-            model.v_MODE_DA_AUC[t]
-          + model.v_MODE_PRL[iv]
-          + model.v_MODE_SRL[iv]
-        ) <= 1
-    #model.c_ONE_MODE_ONLY = pyo.Constraint(model.T, rule=one_mode_per_t_rule)
 
     def mode_sos_rule(m, t):
         iv = m.time_to_interval[t]
         return [
-            m.v_MODE_DA_AUC[t],
+            m.v_MODE_MARKET[t],
             m.v_MODE_PRL[iv],
             m.v_MODE_SRL[iv],
         ]
     model.SOS_ONE_MODE = pyo.SOSConstraint(model.T,rule=mode_sos_rule,sos=1)
 
 
-    _add_dayahead_mode_constraints(model)
+    _add_market_mode_constraints(model)
     _add_prl_mode_constraints(model)
     _add_srl_mode_constraints(model)
 
 
-def _add_dayahead_mode_constraints(model):
+def _add_market_mode_constraints(model):
     def buy_ub_rule(m, t):
-        return m.v_DA_AUC_BUY_VOL[t]  <= m.v_DA_AUC_BUY_VOL[t].ub  * m.v_MODE_DA_AUC[t]
+        return m.v_BUY_VOL[t]  <= m.v_BUY_VOL[t].ub  * m.v_MODE_MARKET[t]
     model.c_MODE_DA_BUY_UB  = pyo.Constraint(model.T, rule=buy_ub_rule)
 
     def sell_ub_rule(m, t):
-        return m.v_DA_AUC_SELL_VOL[t] <= m.v_DA_AUC_SELL_VOL[t].ub * m.v_MODE_DA_AUC[t]
+        return m.v_SELL_VOL[t] <= m.v_SELL_VOL[t].ub * m.v_MODE_MARKET[t]
     model.c_MODE_DA_SELL_UB = pyo.Constraint(model.T, rule=sell_ub_rule)
-
 
 
     def da_sos1_rule(m, t):
         return [
-            m.v_DA_AUC_BUY_VOL[t],
-            m.v_DA_AUC_SELL_VOL[t],
+            m.v_BUY_VOL[t],
+            m.v_SELL_VOL[t],
         ]
     model.SOS_DA_BUY_SELL = pyo.SOSConstraint(
         model.T,
         rule=da_sos1_rule,
         sos=1    # Typ 1 ⇒ max. eine Variable ≠ 0
     )
+
 
 
 def _add_prl_mode_constraints(model):

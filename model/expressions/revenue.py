@@ -6,7 +6,7 @@ from config import (
 
 def define_revenue_expr(model):
     def rev_market_per_t(model, t):
-        return model.v_DA_AUC_SELL_VOL[t] * model.p_HIGHER_MARKET_PRICE[t] - model.v_DA_AUC_BUY_VOL[t] * model.p_LOWER_MARKET_PRICE[t]
+        return model.v_SELL_VOL[t] * model.p_HIGHER_MARKET_PRICE[t] - model.v_BUY_VOL[t] * model.p_LOWER_MARKET_PRICE[t]
     model.e_REVENUE_MARKET = pyo.Expression(model.T, rule=rev_market_per_t)
     model.e_REVENUE_MARKET_SUM = pyo.Expression(expr=sum(model.e_REVENUE_MARKET[t] for t in model.T))
 

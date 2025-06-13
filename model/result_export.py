@@ -43,6 +43,6 @@ def export_to_excel(df_timeseries: pd.DataFrame,
 
     with pd.ExcelWriter(path, engine='xlsxwriter') as writer:
         df_ts_fmt.to_excel(writer, sheet_name='Data')
-        df_attrs.to_excel(writer, sheet_name='Attributes', index=False)
+        df_attrs.to_excel(writer, sheet_name='Attributes', index=True)
 
 

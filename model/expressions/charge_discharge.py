@@ -10,14 +10,14 @@ import pyomo.environ as pyo
 def define_charge_discharge_expr(model):
 
     def market_charge(m, t):
-        return m.v_DA_AUC_BUY_VOL[t] * EFFICIENCY
+        return m.v_BUY_VOL[t] * EFFICIENCY
     model.e_DA_AUC_CHARGE = pyo.Expression(model.T, rule=market_charge)
     model.e_DA_AUC_CHARGE_SUM = pyo.Expression(
         expr=sum(model.e_DA_AUC_CHARGE[t] for t in model.T)
     )
 
     def market_discharge(m, t):
-        return m.v_DA_AUC_SELL_VOL[t] / EFFICIENCY
+        return m.v_SELL_VOL[t] / EFFICIENCY
     model.e_DA_AUC_DISCHARGE = pyo.Expression(model.T, rule=market_discharge)
     model.e_DA_AUC_DISCHARGE_SUM = pyo.Expression(
         expr=sum(model.e_DA_AUC_DISCHARGE[t] for t in model.T)
