@@ -25,7 +25,7 @@ def define_charge_discharge_expr(model):
 
 
     def prl_charge(m, t):
-        return m.v_PRL_POWER[t] * SPECIFIC_PRL_ENERGY_NEED_4H_CYCLE
+        return m.e_PRL_POWER[t] * SPECIFIC_PRL_ENERGY_NEED_4H_CYCLE
     model.e_PRL_CHARGE = pyo.Expression(model.T, rule=prl_charge)
     model.e_PRL_CHARGE_SUM = pyo.Expression(
         expr=sum(model.e_PRL_CHARGE[t] for t in model.T)
@@ -33,7 +33,7 @@ def define_charge_discharge_expr(model):
 
 
     def srl_neg_charge(m, t):
-        return m.v_SRL_POWER_NEG[t] * SPECIFIC_SRL_ENERGY_NEED_4H_CYCLE
+        return m.e_SRL_POWER_NEG[t] * SPECIFIC_SRL_ENERGY_NEED_4H_CYCLE
     model.e_SRL_NEG_CHARGE = pyo.Expression(model.T, rule=srl_neg_charge)
     model.e_SRL_NEG_CHARGE_SUM = pyo.Expression(
         expr=sum(model.e_SRL_NEG_CHARGE[t] for t in model.T)
@@ -41,7 +41,7 @@ def define_charge_discharge_expr(model):
 
 
     def srl_pos_charge(m, t):
-        return m.v_SRL_POWER_POS[t] * SPECIFIC_SRL_ENERGY_NEED_4H_CYCLE
+        return m.e_SRL_POWER_POS[t] * SPECIFIC_SRL_ENERGY_NEED_4H_CYCLE
     model.e_SRL_POS_CHARGE = pyo.Expression(model.T, rule=srl_pos_charge)
     model.e_SRL_POS_CHARGE_SUM = pyo.Expression(
         expr=sum(model.e_SRL_POS_CHARGE[t] for t in model.T)

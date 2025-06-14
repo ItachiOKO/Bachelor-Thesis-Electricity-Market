@@ -12,12 +12,12 @@ def define_revenue_expr(model):
 
 
     def rev_prl_per_t(model, t):
-        return model.p_PRLPRICE[t] * model.v_PRL_POWER[t]
+        return model.p_PRLPRICE[t] * model.e_PRL_POWER[t]
     model.e_REVENUE_PRL = pyo.Expression(model.T, rule=rev_prl_per_t)
     model.e_REVENUE_PRL_SUM = pyo.Expression(expr=sum(model.e_REVENUE_PRL[t] for t in model.T))
 
     def rev_srl_per_t(model, t):
-        return model.v_SRL_POWER_NEG[t] * (model.p_SRL_PRICE_NEG[t] - model.p_SRL_WORK_PRICE_NEG[t] * SPECIFIC_SRL_ENERGY_NEED_4H_CYCLE) + model.v_SRL_POWER_POS[t] * (model.p_SRL_PRICE_POS[t] + model.p_SRL_WORK_PRICE_POS[t] * SPECIFIC_SRL_ENERGY_NEED_4H_CYCLE)
+        return model.e_SRL_POWER_NEG[t] * (model.p_SRL_PRICE_NEG[t] - model.p_SRL_WORK_PRICE_NEG[t] * SPECIFIC_SRL_ENERGY_NEED_4H_CYCLE) + model.e_SRL_POWER_POS[t] * (model.p_SRL_PRICE_POS[t] + model.p_SRL_WORK_PRICE_POS[t] * SPECIFIC_SRL_ENERGY_NEED_4H_CYCLE)
     model.e_REVENUE_SRL = pyo.Expression(model.T, rule=rev_srl_per_t)
     model.e_REVENUE_SRL_SUM = pyo.Expression(expr=sum(model.e_REVENUE_SRL[t] for t in model.T))
 

@@ -13,9 +13,9 @@ def add_model_timeseries_results_to_df(template_df, models_by_year):
         CC.BUY_VOL:  lambda m, t: m.v_BUY_VOL[t],
         CC.SELL_VOL: lambda m, t: m.v_SELL_VOL[t],
         CC.BAT_SOC:         lambda m, t: m.v_BAT_SOC[t],
-        CC.PRL_POWER:       lambda m, t: m.v_PRL_POWER[t],
-        CC.SRL_POWER_NEG:   lambda m, t: m.v_SRL_POWER_NEG[t],
-        CC.SRL_POWER_POS:   lambda m, t: m.v_SRL_POWER_POS[t],
+        CC.PRL_POWER:       lambda m, t: m.e_PRL_POWER[t],
+        CC.SRL_POWER_NEG:   lambda m, t: m.e_SRL_POWER_NEG[t],
+        CC.SRL_POWER_POS:   lambda m, t: m.e_SRL_POWER_POS[t],
         CC.AGING_COST:      lambda m, t: m.e_AGING_COST[t],
     }
 
