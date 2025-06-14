@@ -1,6 +1,18 @@
 import pyomo.environ as pyo
 from config import BAT_CAPACITY, SYSTEM_POWER
 
+def add_srl_mode_constraints(model):
+    def neg_rule(model, t):
+        iv = model.time_to_interval[t]
+        return model.v_SRL_POWER_NEG[t] <= model.v_SRL_POWER_NEG[t].ub * model.v_MODE_SRL[iv]
+    model.c_MODE_SRL_POWER_NEG_UB = pyo.Constraint(model.T, rule=neg_rule)
+
+    def pos_rule(model, t):
+        iv = model.time_to_interval[t]
+        return model.v_SRL_POWER_POS[t] <= model.v_SRL_POWER_POS[t].ub * model.v_MODE_SRL[iv]
+    model.c_MODE_SRL_POWER_POS_UB = pyo.Constraint(model.T, rule=pos_rule)
+
+
 
 def add_srl_constraints(model):
 
@@ -9,7 +21,7 @@ def add_srl_constraints(model):
 
     def max_srl_power_rule(m, t):
         return m.v_SRL_POWER_POS[t] + m.v_SRL_POWER_NEG[t] <= SYSTEM_POWER
-    model.c_MAX_SRL_POWER = pyo.Constraint(model.T, rule=max_srl_power_rule)
+    #model.c_MAX_SRL_POWER = pyo.Constraint(model.T, rule=max_srl_power_rule)
 
 
     def soc_pos_rule(m, t):

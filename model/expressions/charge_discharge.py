@@ -11,16 +11,16 @@ def define_charge_discharge_expr(model):
 
     def market_charge(m, t):
         return m.v_BUY_VOL[t] * EFFICIENCY
-    model.e_DA_AUC_CHARGE = pyo.Expression(model.T, rule=market_charge)
+    model.e_MARKET_CHARGE = pyo.Expression(model.T, rule=market_charge)
     model.e_DA_AUC_CHARGE_SUM = pyo.Expression(
-        expr=sum(model.e_DA_AUC_CHARGE[t] for t in model.T)
+        expr=sum(model.e_MARKET_CHARGE[t] for t in model.T)
     )
 
     def market_discharge(m, t):
         return m.v_SELL_VOL[t] / EFFICIENCY
-    model.e_DA_AUC_DISCHARGE = pyo.Expression(model.T, rule=market_discharge)
+    model.e_MARKET_DISCHARGE = pyo.Expression(model.T, rule=market_discharge)
     model.e_DA_AUC_DISCHARGE_SUM = pyo.Expression(
-        expr=sum(model.e_DA_AUC_DISCHARGE[t] for t in model.T)
+        expr=sum(model.e_MARKET_DISCHARGE[t] for t in model.T)
     )
 
 
@@ -49,7 +49,7 @@ def define_charge_discharge_expr(model):
 
 
     def total_charge(m, t):
-        return (m.e_DA_AUC_CHARGE[t] + m.e_PRL_CHARGE[t] / 2 +
+        return (m.e_MARKET_CHARGE[t] + m.e_PRL_CHARGE[t] / 2 +
                 m.e_SRL_NEG_CHARGE[t])
     model.e_TOTAL_CHARGE = pyo.Expression(model.T, rule=total_charge)
     model.e_TOTAL_CHARGE_SUM = pyo.Expression(
@@ -57,7 +57,7 @@ def define_charge_discharge_expr(model):
     )
 
     def total_discharge(m, t):
-        return (m.e_DA_AUC_DISCHARGE[t] + m.e_PRL_CHARGE[t] / 2 +
+        return (m.e_MARKET_DISCHARGE[t] + m.e_PRL_CHARGE[t] / 2 +
                  + m.e_SRL_POS_CHARGE[t]) 
     model.e_TOTAL_DISCHARGE = pyo.Expression(model.T, rule=total_discharge)
     model.e_TOTAL_DISCHARGE_SUM = pyo.Expression(

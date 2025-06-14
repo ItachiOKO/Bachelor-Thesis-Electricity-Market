@@ -16,7 +16,10 @@ def setup_model(df_data_period):
     time_points = df_data_period.index.tolist()	
     model = pyo.ConcreteModel()
     model.T = pyo.Set(initialize=time_points, ordered=True)
-
+    unique_intervals = sorted({(t.date(), t.hour // 4) for t in time_points})
+    model.D4 = pyo.Set(initialize=unique_intervals, ordered=True)
+    model.time_to_interval = {t: (t.date(), t.hour // 4) for t in time_points}
+    
     define_params(model, df_data_period)
     define_variables(model)
     define_all_expressions(model)
