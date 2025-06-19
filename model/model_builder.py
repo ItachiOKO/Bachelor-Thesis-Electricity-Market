@@ -9,7 +9,12 @@ from model.objective import define_objective
 
 def solve_model(model):
     solver = pyo.SolverFactory('gurobi')
+    solver.options['Threads'] = 12
+    solver.options['MIPGap'] = 0.005  # 1% Optimalitätslücke akzeptieren
+
+    #solver.options['TimeLimit'] = 1  # Zeitlimit (Sekunden)
     return solver.solve(model, tee=False)
+
 
 
 def setup_model(df_data_period):
