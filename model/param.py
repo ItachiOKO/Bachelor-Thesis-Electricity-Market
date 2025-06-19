@@ -4,8 +4,10 @@ from config import ColumnNamesClean as CC
 
 def define_params(model: pyo.ConcreteModel, df_data_period) -> None:
     
+    #market prices
     higher_market_price_dict = df_data_period[CC.HiGHER_MARKET_PRICE].to_dict()
     lower_market_price_dict = df_data_period[CC.LOWER_MARKET_PRICE].to_dict()
+    #PRL and SRL prices
     prl_price_dict = df_data_period[CC.PRL_PRICE].to_dict()
     srl_power_price_neg_dict = df_data_period[CC.SRL_POWER_PRICE_NEG].to_dict()
     srl_power_price_pos_dict = df_data_period[CC.SRL_POWER_PRICE_POS].to_dict()

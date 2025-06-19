@@ -33,8 +33,10 @@ def build_models_by_year(df_data: pd.DataFrame) -> Dict[int, object]:
 
         year = year_timestamp.year
         print(f"Baue Modell für Jahr {year} ({df_data_year.index[0].date()} bis {df_data_year.index[-1].date()})")
-        
+        #measure
+        start_time = time.time()
         model_year = main_optimisation(df_data_year)
+        print(f"{year}:  {time.time() - start_time:.2f} Sekunden")
         models_by_year[year] = model_year
 
     return models_by_year
@@ -42,9 +44,7 @@ def build_models_by_year(df_data: pd.DataFrame) -> Dict[int, object]:
 
 if __name__ == "__main__":
     df = create_dataframe(START_DATE, END_DATE, debug=False)
-    start_time = time.time()
     models_by_year = build_models_by_year(df)
-    print(f"Optimierung abgeschlossen in {time.time() - start_time:.2f} Sekunden")
 
     df_timeseries = add_model_timeseries_results_to_df(df, models_by_year)
     df_attrs = add_model_atrs_results_to_df(models_by_year)
