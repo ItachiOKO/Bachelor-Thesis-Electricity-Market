@@ -2,8 +2,6 @@ import time
 import pandas as pd
 from utils import convert_datetime_to_string
 from config import (
-    ColumnNamesRaw as CR,
-    ColumnNamesClean as CC,
     START_DATE,
     END_DATE,
     PATH_DA_AUC_DATA,
@@ -12,6 +10,7 @@ from config import (
     PATH_SRL_WORK_DATA,
     PATH_INTRADAY_DATA,
 )
+from config_column_names import ColumnNamesRaw as CR,  ColumnNamesClean as CC
 
 from dataloader import (
     load_da_auc_data,

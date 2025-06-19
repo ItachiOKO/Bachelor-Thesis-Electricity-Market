@@ -5,9 +5,9 @@ from dataloader.load_id_auc import load_id_auc_data
 from config import (
     PATH_DA_AUC_DATA,
     PATH_INTRADAY_DATA,
-    ColumnNamesRaw as CR,
-    ColumnNamesClean as CC
 )
+from config_column_names import ColumnNamesRaw as CR,  ColumnNamesClean as CC
+
 
 
 def compare_da_id_prices(da_df: pd.DataFrame, id_df: pd.DataFrame) -> pd.DataFrame:

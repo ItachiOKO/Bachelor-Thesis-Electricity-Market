@@ -1,7 +1,7 @@
 import os
 import locale
 import pandas as pd
-from config import (
+from config_column_names import (
     ColumnNamesRaw as CR,
     ColumnNamesClean as CC,
 )

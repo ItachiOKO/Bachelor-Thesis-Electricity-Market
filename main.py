@@ -6,12 +6,10 @@ import pandas as pd
 from typing import Dict
 import pyomo.environ as pyo
 from model.model_builder import setup_model, solve_model
-from model.pyomo_extractor import add_model_timeseries_results_to_df, add_model_atrs_results_to_df
-from model.result_export import export_results
+from result_processing.pyomo_extractor import add_model_timeseries_results_to_df, add_model_atrs_results_to_df
+from result_processing.result_export import export_results
 from data_pipline import create_dataframe
 from config import (
-    RESULTS_FILE_NAME_EXCEL,
-    RESULTS_FILE_NAME_PICKLE,
     START_DATE,
     END_DATE,
 )

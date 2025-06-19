@@ -1,11 +1,8 @@
 import os
 import locale
 import pandas as pd
-from config import (
-    ColumnNamesRaw as CR,
-    ColumnNamesClean as CC,
-    
-)
+from config_column_names import ColumnNamesRaw as CR,  ColumnNamesClean as CC
+
 
 
 def load_srl_work_data1(path_data, cr_srl_work_price, cc_srl_work_price_pos, cc_srl_work_price_neg) -> pd.DataFrame:

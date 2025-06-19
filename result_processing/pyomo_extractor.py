@@ -1,6 +1,6 @@
 import pandas as pd
 import pyomo.environ as pyo
-from config import ColumnNamesClean as CC	
+from config_column_names import ColumnNamesClean as CC	
 
 
 

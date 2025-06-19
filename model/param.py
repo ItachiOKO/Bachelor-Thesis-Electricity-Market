@@ -1,6 +1,6 @@
 import pyomo.environ as pyo
 from typing import Mapping, Any
-from config import ColumnNamesClean as CC
+from config_column_names import ColumnNamesClean as CC
 
 def define_params(model: pyo.ConcreteModel, df_data_period) -> None:
     
