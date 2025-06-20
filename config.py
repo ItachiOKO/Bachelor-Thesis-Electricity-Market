@@ -28,8 +28,8 @@ SPECIFIC_SRL_ENERGY_NEED_4H_CYCLE = 1/99 # 1/99 -> MWh/MW (in 15min)
 
 #Märkte
 MARKET_SWITCH = 1
-PRL_SWITCH = 0
-SRL_SWITCH = 0
+PRL_SWITCH = 1
+SRL_SWITCH = 1
 
 #Export Config
 RESULTS_DIR = Path("results")

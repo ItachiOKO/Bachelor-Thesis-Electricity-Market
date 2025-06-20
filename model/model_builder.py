@@ -12,7 +12,7 @@ def solve_model(model):
     solver.options['Threads'] = 12
     solver.options['MIPGap'] = 0.005  # 1% Optimalitätslücke akzeptieren
 
-    #solver.options['TimeLimit'] = 1  # Zeitlimit (Sekunden)
+    solver.options['TimeLimit'] = 10  # Zeitlimit (Sekunden)
     return solver.solve(model, tee=False)
 
 

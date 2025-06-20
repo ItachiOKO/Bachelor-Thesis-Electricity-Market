@@ -45,7 +45,7 @@ def add_model_atrs_results_to_df(models_by_year):
         CC.REVENUE_MARKET_SUM: lambda m: pyo.value(m.e_REVENUE_MARKET_SUM),
         CC.REVENUE_PRL_SUM: lambda m: pyo.value(m.e_REVENUE_PRL_SUM),
         CC.REVENUE_SRL_SUM: lambda m: pyo.value(m.e_REVENUE_SRL_SUM),
-        CC.TOTAL_REVENUE_SUM: lambda m: pyo.value(m.e_TOTAL_REVENUE_SUM),
+        CC.REVENUE_TOTAL_SUM: lambda m: pyo.value(m.e_TOTAL_REVENUE_SUM),
         CC.TAXES_SUM: lambda m: pyo.value(m.e_TAX),
         CC.OBJ: lambda m: pyo.value(m.OBJ),
         #CC.REVENUE_PRL_SUM:     

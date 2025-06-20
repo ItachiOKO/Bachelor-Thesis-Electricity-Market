@@ -50,6 +50,6 @@ class ColumnNamesClean:
     REVENUE_MARKET_SUM  = 'Revenue Market Sum'
     REVENUE_PRL_SUM     = 'Revenue PRL Sum'
     REVENUE_SRL_SUM     = 'Revenue SRL Sum'  
-    TOTAL_REVENUE_SUM   = 'Total Revenue Sum'
+    REVENUE_TOTAL_SUM   = 'Total Revenue Sum'
     TAXES_SUM           = 'Taxes Sum'
     OBJ                 = 'Objective Value'
