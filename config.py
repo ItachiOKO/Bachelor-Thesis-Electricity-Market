@@ -3,7 +3,7 @@ from pathlib import Path
 
 #Data Config
 START_DATE = "2023-01-01" #included
-END_DATE = "2023-01-05" #excluded
+END_DATE = "2023-03-01" #excluded
 
 PATH_DA_AUC_DATA = "data\Energy-Charts DayAhead 2021 bis 2024.xlsx"
 PATH_INTRADAY_DATA = "data\Energy-Charts Intraday 2021 bis 2024.xlsx"
@@ -26,10 +26,14 @@ CHARGE_RATE = SYSTEM_POWER * (15/60)
 SPECIFIC_PRL_ENERGY_NEED_4H_CYCLE = 1/3 / 16 # 1/3 -> MWh/MW (in 4 Stunden) 1/3 / 16 -> MWh/MW (in 15min)
 SPECIFIC_SRL_ENERGY_NEED_4H_CYCLE = 1/99 # 1/99 -> MWh/MW (in 15min)
 
+#Märkte
+MARKET_SWITCH = 1
+PRL_SWITCH = 0
+SRL_SWITCH = 0
 
 #Export Config
 RESULTS_DIR = Path("results")
-FILE_NAME = f"results_{BAT_CAPACITY}MWH_SCR-{SYSTEM_POWER}MW_P-{BAT_PRICE}€_LC-{LIFETIME_CYCLES}n_n-{EFFICIENCY}%_{START_DATE}to{END_DATE}"
+FILE_NAME = f"results_market-{MARKET_SWITCH}_prl-{PRL_SWITCH}_srl-{SRL_SWITCH}_{BAT_CAPACITY}-MWH_{SYSTEM_POWER}MW_{BAT_PRICE}€_LC-{LIFETIME_CYCLES}n_n-{EFFICIENCY}%_{START_DATE}to{END_DATE}"
 RESULTS_FILE_NAME_EXCEL =  f"{FILE_NAME}.xlsx"
 RESULTS_FILE_NAME_PICKLE = f"{FILE_NAME}.pkl"
 

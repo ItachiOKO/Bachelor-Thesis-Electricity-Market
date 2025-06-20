@@ -16,6 +16,10 @@ def add_model_timeseries_results_to_df(template_df, models_by_year):
         CC.PRL_POWER:       lambda m, t: m.e_PRL_POWER[t],
         CC.SRL_POWER_NEG:   lambda m, t: m.e_SRL_POWER_NEG[t],
         CC.SRL_POWER_POS:   lambda m, t: m.e_SRL_POWER_POS[t],
+        CC.REVENUE_MARKET:  lambda m, t: m.e_REVENUE_MARKET[t],
+        CC.REVENUE_PRL:     lambda m, t: m.e_REVENUE_PRL[t],
+        CC.REVENUE_SRL:     lambda m, t: m.e_REVENUE_SRL[t],
+        CC.REVENUE_TOTAL:   lambda m, t: m.e_TOTAL_REVENUE[t],
         CC.AGING_COST:      lambda m, t: m.e_AGING_COST[t],
     }
 
