@@ -13,6 +13,7 @@ from config import (
     START_DATE,
     END_DATE,
 )
+from utils import get_config_as_dict
 
 
 def main_optimisation(df_data_period):
@@ -49,7 +50,8 @@ if __name__ == "__main__":
 
     #print(df_timeseries)
     print(df_attrs)
-    export_results(df_timeseries, df_attrs)
+    config_data = get_config_as_dict()
+    export_results(df_timeseries, df_attrs, config_data)
 
 
 

@@ -2,6 +2,8 @@ import os
 from datetime import datetime
 import pandas as pd
 from config import SYSTEM_POWER
+import config
+import inspect
 
 
 def get_interval_minutes(df: pd.DataFrame) -> int:
@@ -38,3 +40,13 @@ def get_pickle_path(source_path: str) -> str:
     return f"{base}.pkl"
 
 
+def get_config_as_dict() -> dict:
+
+    config_data = {}
+    for name, value in config.__dict__.items():
+        if name.isupper():
+            if isinstance(value, config.Path):
+                config_data[name] = str(value)
+            else:
+                config_data[name] = value
+    return config_data
