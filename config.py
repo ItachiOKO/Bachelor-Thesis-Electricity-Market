@@ -9,7 +9,7 @@ PATH_DA_AUC_DATA = "data\Energy-Charts DayAhead 2021 bis 2024.xlsx"
 PATH_INTRADAY_DATA = "data\Energy-Charts Intraday 2021 bis 2024.xlsx"
 PATH_PRL_DATA = "data\Primär Ergebnisse 2021 bis 2024.xlsx"
 PATH_SRL_POWER_DATA = 'data/Sekundär Leistung Ergebnisse 2021 bis 2024.xlsx'
-PATH_SRL_WORK_DATA = 'data/Sekundär Arbeit Ergebnisse 2021 bis 2024.xlsx'
+PATH_SRL_WORK_DATA = 'data/SRL Arbeitspreise berechnet 2021 bis 2024.xlsx'
 
 
 #Battery Config

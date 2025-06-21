@@ -7,9 +7,10 @@ from utils import get_pickle_path
 def load_srl_power_data(path, cr_srl_power_price, cc_srl_power_price_pos, cc_srl_power_price_neg) -> pd.DataFrame:
     pkl_path = get_pickle_path(path)
     if os.path.exists(pkl_path):
-        #print(f"Loading data from {pkl_path}")
+        print(f"Loading data from {pkl_path}")
         return pd.read_pickle(pkl_path)
     
+    print(f"Loading data from {path}")
     df = pd.read_excel(
         path,
         usecols=['DATE_FROM', 'DATE_TO', 'PRODUCT', cr_srl_power_price],

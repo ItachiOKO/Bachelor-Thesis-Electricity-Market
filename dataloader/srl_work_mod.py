@@ -85,14 +85,14 @@ if __name__ == "__main__":
     
     df1 = load_srl_work_data1(
         path1,
-        CR.SRL_WORK_PRICE,
+        CR.SRL_WORK_PRICE_NEG,
         CC.SRL_WORK_PRICE_POS,
         CC.SRL_WORK_PRICE_NEG
     )
 
     df2 = load_srl_work_data2(
         path2,
-        CR.SRL_WORK_PRICE,
+        CR.SRL_WORK_PRICE_NEG,
         CC.SRL_WORK_PRICE_POS,
         CC.SRL_WORK_PRICE_NEG
     )

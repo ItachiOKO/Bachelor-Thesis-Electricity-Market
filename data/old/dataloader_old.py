@@ -143,7 +143,7 @@ def load_srl_work_data(path_data):
     
     df = pd.read_excel(
         path_data,
-        usecols=['DELIVERY_DATE', 'PRODUCT', CR.SRL_WORK_PRICE],
+        usecols=['DELIVERY_DATE', 'PRODUCT', CR.SRL_WORK_PRICE_NEG],
         )
     
     df['DELIVERY_DATE'] = pd.to_datetime(df['DELIVERY_DATE'], dayfirst=True)
@@ -164,7 +164,7 @@ def load_srl_work_data(path_data):
     df_wide = df.pivot(
         index='datetime',
         columns='direction',
-        values=CR.SRL_WORK_PRICE
+        values=CR.SRL_WORK_PRICE_NEG
     )
     
     df_wide = df_wide.rename(

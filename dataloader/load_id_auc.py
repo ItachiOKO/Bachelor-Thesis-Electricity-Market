@@ -8,9 +8,10 @@ def load_id_auc_data(path, cr_energie_charts_date, cr_id_price_auc_15min, cr_id_
     locale.setlocale(locale.LC_NUMERIC, 'de_DE.UTF-8')
     pkl_path = get_pickle_path(path)
     if os.path.exists(pkl_path):
-        #print(f"Loading data from {pkl_path}")
+        print(f"Loading data from {pkl_path}")
         return pd.read_pickle(pkl_path)
 
+    print(f"Loading data from {path}")
     df = pd.read_excel(
         path,
         usecols=[
