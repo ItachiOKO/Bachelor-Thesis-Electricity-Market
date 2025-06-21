@@ -11,17 +11,14 @@ from config import (
     PATH_INTRADAY_DATA,
 )
 from config_column_names import ColumnNamesRaw as CR,  ColumnNamesClean as CC
-
 from dataloader import (
-    load_da_auc_data,
-    load_id_auc_data,
+
     load_compared_auc_data,
     load_prl_data,
     load_srl_power_data,
     load_srl_work_data,
 
 )
-
 import logging
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s')
@@ -36,7 +33,7 @@ def create_dataframe(start_date, end_date, debug=False):
         #(load_id_auc_data,      (PATH_INTRADAY_DATA, CR.ENERGIE_CHARTS_DATE, CR.ID_PRICE_AUC_15min, CR.ID_PRICE_AUC_IDA1_GEKOPPELT, CC.ID_AUC_PRICE)),
         (load_prl_data,          (PATH_PRL_DATA, CR.PRL_PRICE, CC.DATE, CC.PRL_PRICE)),
         (load_srl_power_data,    (PATH_SRL_POWER_DATA, CR.SRL_POWER_PRICE, CC.SRL_POWER_PRICE_POS, CC.SRL_POWER_PRICE_NEG)),
-        (load_srl_work_data,     (PATH_SRL_WORK_DATA, CC.SRL_WORK_PRICE_NEG, CC.SRL_WORK_PRICE_POS))
+        (load_srl_work_data,     (PATH_SRL_WORK_DATA, CR.SRL_WORK_PRICE_NEG, CR.SRL_WORK_PRICE_POS, CC.SRL_WORK_PRICE_NEG, CC.SRL_WORK_PRICE_POS)),
     ]
 
     for loader, args in loader_tasks:
@@ -65,7 +62,7 @@ def create_master_df(start_date, end_date):
 if __name__ == "__main__":
     # mesure time
     start_time = time.time()
-    df = create_dataframe(START_DATE, END_DATE, debug=True)
+    df = create_dataframe(START_DATE, END_DATE, debug=False)
     print(f"Berechnungszeit: {round(time.time() - start_time, 1)} Sekunden")
     print(df)
     print(len(df))
