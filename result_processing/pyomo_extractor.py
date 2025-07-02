@@ -12,10 +12,12 @@ def add_model_timeseries_results_to_df(template_df, models_by_year):
     column_extractor_map = {
         CC.BUY_VOL:  lambda m, t: m.v_BUY_VOL[t],
         CC.SELL_VOL: lambda m, t: m.v_SELL_VOL[t],
-        CC.BAT_SOC:         lambda m, t: m.v_BAT_SOC[t],
         CC.PRL_POWER:       lambda m, t: m.e_PRL_POWER[t],
         CC.SRL_POWER_NEG:   lambda m, t: m.e_SRL_POWER_NEG[t],
         CC.SRL_POWER_POS:   lambda m, t: m.e_SRL_POWER_POS[t],
+        CC.BAT_SOC:         lambda m, t: m.v_BAT_SOC[t],
+        'CHARGE':           lambda m, t: m.e_TOTAL_CHARGE[t],
+        'DISCHARGE':        lambda m, t: m.e_TOTAL_DISCHARGE[t],
         CC.REVENUE_MARKET:  lambda m, t: m.e_REVENUE_MARKET[t],
         CC.REVENUE_PRL:     lambda m, t: m.e_REVENUE_PRL[t],
         CC.REVENUE_SRL:     lambda m, t: m.e_REVENUE_SRL[t],

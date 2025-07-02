@@ -9,6 +9,7 @@ from config import (
     PATH_SRL_POWER_DATA,
     PATH_SRL_WORK_DATA,
     PATH_INTRADAY_DATA,
+    SPECIFIC_AGING_COST
 )
 from config_column_names import ColumnNamesRaw as CR,  ColumnNamesClean as CC
 from dataloader import (
@@ -16,7 +17,7 @@ from dataloader import (
     load_compared_auc_data,
     load_prl_data,
     load_srl_power_data,
-    load_srl_work_data,
+    load_srl_work_cbmp_data,
 
 )
 import logging
@@ -33,7 +34,7 @@ def create_dataframe(start_date, end_date, debug=False):
         #(load_id_auc_data,      (PATH_INTRADAY_DATA, CR.ENERGIE_CHARTS_DATE, CR.ID_PRICE_AUC_15min, CR.ID_PRICE_AUC_IDA1_GEKOPPELT, CC.ID_AUC_PRICE)),
         (load_prl_data,          (PATH_PRL_DATA, CR.PRL_PRICE, CC.DATE, CC.PRL_PRICE)),
         (load_srl_power_data,    (PATH_SRL_POWER_DATA, CR.SRL_POWER_PRICE, CC.SRL_POWER_PRICE_POS, CC.SRL_POWER_PRICE_NEG)),
-        (load_srl_work_data,     (PATH_SRL_WORK_DATA, CR.SRL_WORK_PRICE_NEG, CR.SRL_WORK_PRICE_POS, CC.SRL_WORK_PRICE_NEG, CC.SRL_WORK_PRICE_POS)),
+        (load_srl_work_cbmp_data, (PATH_SRL_WORK_DATA, SPECIFIC_AGING_COST, CR.SRL_NEG_WORK_CBMP, CR.SRL_POS_WORK_CBMP, CC.SRL_NEG_WORK_CBMP, CC.SRL_POS_WORK_CBMP)),
     ]
 
     for loader, args in loader_tasks:
@@ -54,7 +55,7 @@ def create_dataframe(start_date, end_date, debug=False):
 
 
 def create_master_df(start_date, end_date):
-    master_index = pd.date_range(start=start_date, end=end_date, freq='15T', tz='Europe/Berlin', inclusive='left')
+    master_index = pd.date_range(start=start_date, end=end_date, freq='15min', tz='Europe/Berlin', inclusive='left')
     df = pd.DataFrame(index=master_index)
     return df
 

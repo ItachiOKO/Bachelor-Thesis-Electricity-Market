@@ -18,7 +18,7 @@ def add_prl_mode_constraints(model):
 
 import pyomo.environ as pyo
 
-def add_prl_constraints(model):
+def add_prl_soc_constraints(model):
     M_SOC = 1
 
     def soc_prl_discharge_buffer(model, t):

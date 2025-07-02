@@ -7,8 +7,8 @@ class ColumnNamesRaw:
     ID_PRICE_AUC_IDA1_GEKOPPELT = 'gekoppelte intraday auktion, 15 minuten ida1-preis'
     PRL_PRICE                   = 'DE_SETTLEMENTCAPACITY_PRICE_[EUR/MW]' #€/MWh
     SRL_POWER_PRICE             = 'GERMANY_AVERAGE_CAPACITY_PRICE_[(EUR/MW)/h]' #€/MWh; muss neu aus original Daten gezogen werden wenn geändert wird
-    SRL_WORK_PRICE_NEG              = 'Bester Preis NEG (EUR / MWh)' #€/MWh, nur die Spalte enthalten, ggf. neu aus original Daten ziehen wenn geändert wird
-    SRL_WORK_PRICE_POS              = 'Bester Preis POS (EUR / MWh)' #€/MWh, nur die Spalte enthalten, ggf. neu aus original Daten ziehen wenn geändert wird
+    SRL_NEG_WORK_CBMP              = 'Price [EUR/MWh] Down'
+    SRL_POS_WORK_CBMP              = 'Price [EUR/MWh] Up' 
 
 class ColumnNamesClean:
     #data
@@ -23,8 +23,8 @@ class ColumnNamesClean:
     PRL_PRICE            = 'PRL Price'
     SRL_POWER_PRICE_POS  = 'SRL Power Price Pos'
     SRL_POWER_PRICE_NEG  = 'SRL Power Price Neg'
-    SRL_WORK_PRICE_POS   = 'SRL Work Price Pos'
-    SRL_WORK_PRICE_NEG   = 'SRL Work Price Neg'
+    SRL_NEG_WORK_CBMP   = 'SRL Work Price Neg'
+    SRL_POS_WORK_CBMP   = 'SRL Work Price Pos'
 
     #results
     BUY_VOL              = 'Buy Volume'

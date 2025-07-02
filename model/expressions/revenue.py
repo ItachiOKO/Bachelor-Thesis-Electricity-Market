@@ -7,7 +7,6 @@ from config import (
 )
 
 
-
 def define_revenue_expr(model):
     
     def rev_market(model, t):
@@ -22,7 +21,12 @@ def define_revenue_expr(model):
     model.e_REVENUE_PRL_SUM = pyo.Expression(expr=sum(model.e_REVENUE_PRL[t] for t in model.T))
 
     def rev_srl(model, t):
-        return model.e_SRL_POWER_NEG[t] * (model.p_SRL_PRICE_NEG[t] - model.p_SRL_WORK_PRICE_NEG[t] * SPECIFIC_SRL_ENERGY_NEED_4H_CYCLE) + model.e_SRL_POWER_POS[t] * (model.p_SRL_PRICE_POS[t] + model.p_SRL_WORK_PRICE_POS[t] * SPECIFIC_SRL_ENERGY_NEED_4H_CYCLE)
+        rev_p_neg = model.e_SRL_POWER_NEG[t] * model.p_SRL_PRICE_NEG[t]
+        rev_p_pos = model.e_SRL_POWER_POS[t] * model.p_SRL_PRICE_POS[t]
+        rev_w_neg = model.e_SRL_POWER_NEG[t] * -model.p_SRL_WORK_PRICE_NEG[t] * 1/4  # mwh/15min # negativer Preis --> Anbieter erhält Geld
+        rev_w_pos = model.e_SRL_POWER_POS[t] * model.p_SRL_WORK_PRICE_POS[t] * 1/4   # mwh/15min # positiver Preis --> Anbieter erhält Geld
+        return rev_p_neg + rev_p_pos + rev_w_neg + rev_w_pos
+
     model.e_REVENUE_SRL = pyo.Expression(model.T, rule=rev_srl)
     model.e_REVENUE_SRL_SUM = pyo.Expression(expr=sum(model.e_REVENUE_SRL[t] for t in model.T))
 

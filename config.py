@@ -3,13 +3,14 @@ from pathlib import Path
 
 #Data Config
 START_DATE = "2023-01-01" #included
-END_DATE = "2023-03-01" #excluded
+END_DATE = "2023-01-06" #excluded
 
-PATH_DA_AUC_DATA = "data\Energy-Charts DayAhead 2021 bis 2024.xlsx"
-PATH_INTRADAY_DATA = "data\Energy-Charts Intraday 2021 bis 2024.xlsx"
-PATH_PRL_DATA = "data\Primär Ergebnisse 2021 bis 2024.xlsx"
+PATH_DA_AUC_DATA = "data/Energy-Charts DayAhead 2021 bis 2024.xlsx"
+PATH_INTRADAY_DATA = "data/Energy-Charts Intraday 2021 bis 2024.xlsx"
+PATH_PRL_DATA = "data/Primär Ergebnisse 2021 bis 2024.xlsx"
 PATH_SRL_POWER_DATA = 'data/Sekundär Leistung Ergebnisse 2021 bis 2024.xlsx'
-PATH_SRL_WORK_DATA = 'data/SRL Arbeitspreise berechnet 2021 bis 2024.xlsx'
+PATH_SRL_WORK_DATA = 'data/srl_work_cbmp_2022-07-01 - 2025-06-29.pkl'
+
 
 
 #Battery Config
@@ -17,7 +18,7 @@ BAT_CAPACITY = 1.2 #MWh
 SYSTEM_POWER = 1.2 #MW (1MW = 1MWh/1h)
 BAT_PRICE = 270000 * BAT_CAPACITY #€
 LIFETIME_CYCLES = 9000
-EFFICIENCY = 0.86 # AC Seitig vom Umrichter. einseitiger Wirkungsgrad (jeweils Lade- und Entladeverluste)
+EFFICIENCY = 0.9 # AC Seitig vom Umrichter. einseitiger Wirkungsgrad (jeweils Lade- und Entladeverluste)
 SPECIFIC_AGING_COST = BAT_PRICE / (BAT_CAPACITY * LIFETIME_CYCLES * 2) #€/(MWh durchsatz) sowohl Laden als auch Entladen
 CHARGE_RATE = SYSTEM_POWER * (15/60) 
 
@@ -25,6 +26,8 @@ CHARGE_RATE = SYSTEM_POWER * (15/60)
 #Regelleistungsmarkt Config
 SPECIFIC_PRL_ENERGY_NEED_4H_CYCLE = 1/3 / 16 # 1/3 -> MWh/MW (in 4 Stunden) 1/3 / 16 -> MWh/MW (in 15min)
 SPECIFIC_SRL_ENERGY_NEED_4H_CYCLE = 1/99 # 1/99 -> MWh/MW (in 15min)
+PROFIT_FACTOR_SRL_POS = 1.5
+PROFIT_FACTOR_SRL_NEG = 1
 
 #Märkte
 MARKET_SWITCH = 1

@@ -11,8 +11,8 @@ def define_params(model: pyo.ConcreteModel, df_data_period) -> None:
     prl_price_dict = df_data_period[CC.PRL_PRICE].to_dict()
     srl_power_price_neg_dict = df_data_period[CC.SRL_POWER_PRICE_NEG].to_dict()
     srl_power_price_pos_dict = df_data_period[CC.SRL_POWER_PRICE_POS].to_dict()
-    srl_work_price_neg_dict = df_data_period[CC.SRL_WORK_PRICE_NEG].to_dict()
-    srl_work_price_pos_dict = df_data_period[CC.SRL_WORK_PRICE_POS].to_dict()
+    srl_work_price_neg_dict = df_data_period[CC.SRL_NEG_WORK_CBMP].to_dict()
+    srl_work_price_pos_dict = df_data_period[CC.SRL_POS_WORK_CBMP].to_dict()
 
     model.p_HIGHER_MARKET_PRICE = pyo.Param(model.T, initialize=higher_market_price_dict)
     model.p_LOWER_MARKET_PRICE = pyo.Param(model.T, initialize=lower_market_price_dict)
